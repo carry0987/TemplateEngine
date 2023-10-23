@@ -1,12 +1,19 @@
 <?php
 namespace carry0987\Template;
 
-class Database
+class DBController
 {
     private $db;
 
-    public function __construct(array $dbSettings)
+    public function __construct(mixed $dbSettings)
     {
+        if ($dbSettings instanceof \PDO) {
+            $this->db = $dbSettings;
+            return;
+        }
+        if (!is_array($dbSettings)) {
+            throw new \InvalidArgumentException('Invalid database settings');
+        }
         try {
             $this->db = new \PDO('mysql:host='.$dbSettings['host'].';port='.$dbSettings['port'].';dbname='.$dbSettings['database'], $dbSettings['username'], $dbSettings['password']);
         } catch (\PDOException $e) {

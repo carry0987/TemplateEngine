@@ -1,7 +1,7 @@
 <?php
 namespace carry0987\Template;
 
-use carry0987\Template\Database;
+use carry0987\Template\DBController;
 use carry0987\Template\Asset;
 use carry0987\Template\Minifier;
 
@@ -29,7 +29,7 @@ class Template
         );
     }
 
-    public function setDatabase(Database $connectdb)
+    public function setDatabase(DBController $connectdb)
     {
         $this->connectdb = $connectdb;
         $this->asset->setDatabase($connectdb);

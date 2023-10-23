@@ -2,7 +2,7 @@
 require dirname(__FILE__).'/vendor/autoload.php';
 
 use carry0987\Template\Template;
-use carry0987\Template\Database;
+use carry0987\Template\DBController;
 
 //Template setting
 $options = array(
@@ -23,7 +23,7 @@ $config = array(
     'username' => 'root',
     'password' => 'root',
 );
-$database = new Database($config);
+$database = new DBController($config);
 $template = new Template;
 $template->setOptions($options);
 $template->setDatabase($database);

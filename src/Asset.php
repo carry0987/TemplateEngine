@@ -25,7 +25,7 @@ class Asset
     {
     }
 
-    public function setDatabase(Database $connectdb)
+    public function setDatabase(DBController $connectdb)
     {
         $this->connectdb = $connectdb;
     }
