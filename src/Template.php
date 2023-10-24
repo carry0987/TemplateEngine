@@ -12,12 +12,14 @@ class Template
     private $options = array();
     private $compress = array('html' => false, 'css' => true);
     private $connectdb = null;
+    private $redis = null;
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
     // Construct options
     public function __construct()
     {
         $this->asset = Asset::getInstance();
+        $this->asset->setTemplate($this);
         $this->options = array(
             'template_dir' => 'templates'.self::DIR_SEP,
             'css_dir' => 'css'.self::DIR_SEP,
@@ -33,6 +35,12 @@ class Template
     {
         $this->connectdb = $connectdb;
         $this->asset->setDatabase($connectdb);
+    }
+
+    public function setRedis(RedisController $redis)
+    {
+        $this->redis = $redis;
+        $this->asset->setRedis($redis);
     }
 
     // Set template parameter array
@@ -101,6 +109,9 @@ class Template
             case 'cache_db':
                 $this->setDatabase($value ?? null);
                 break;
+            case 'redis':
+                $this->setRedis($value ?? null);
+                break;
             default:
                 self::throwError('Unknown template setting options', $name);
                 break;
@@ -127,7 +138,7 @@ class Template
     /* Template file cache */
     public function loadTemplate($file)
     {
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $versionContent = $this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html');
             if ($versionContent === false) {
                 $this->parseTemplate($file);
@@ -155,7 +166,7 @@ class Template
     private function checkTemplate($file)
     {
         $check_tpl = false;
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $versionContent = $this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html');
             if ($versionContent !== false) {
                 $md5data = $versionContent['tpl_md5'];
@@ -296,7 +307,7 @@ class Template
             file_put_contents($cachefile, $template."\n");
         }
 
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             //Insert md5 and expiretime into cache database
             $md5data = md5_file($tplfile);
             $expire_time = time();
@@ -339,23 +350,35 @@ class Template
         return Utils::trimPath($this->options['cache_dir'].self::DIR_SEP.$file);
     }
 
-    private function getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type)
+    public function getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type)
     {
+        if ($this->redis !== null) {
+            $redis = $this->redis->getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type);
+            if ($redis !== false) return $redis;
+        }
         if ($this->connectdb !== null) {
             return $this->connectdb->getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type);
         }
         return false;
     }
 
-    private function createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
+    public function createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
     {
+        if ($this->redis !== null) {
+            $redis = $this->redis->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
+            if ($redis !== false) return $redis;
+        }
         if ($this->connectdb !== null) {
             $this->connectdb->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
         }
     }
 
-    private function updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
+    public function updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
     {
+        if ($this->redis !== null) {
+            $redis = $this->redis->updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
+            if ($redis !== false) return $redis;
+        }
         if ($this->connectdb !== null) {
             $this->connectdb->updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
         }

@@ -8,6 +8,7 @@ class Asset
     private $blocks = array();
     private $place = '';
     private $connectdb = null;
+    private $redis = null;
     private $template = null;
     public $compress = array('html' => false, 'css' => true);
 
@@ -28,6 +29,11 @@ class Asset
     public function setDatabase(DBController $connectdb)
     {
         $this->connectdb = $connectdb;
+    }
+
+    public function setRedis(RedisController $redis)
+    {
+        $this->redis = $redis;
     }
 
     public function setTemplate(Template $template)
@@ -98,15 +104,15 @@ class Asset
         $verhash = Utils::generateRandom(7);
         //Insert md5 & verhash
         $expire_time = time();
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $trimed_name = $this->trimCSSName($file);
             if (!empty($this->place)) {
                 $trimed_name .= '::'.$this->placeCSSName($this->place);
             }
-            if ($this->connectdb->getVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css') !== false) {
-                $this->connectdb->updateVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
+            if ($this->template->getVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css') !== false) {
+                $this->template->updateVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
             } else {
-                $this->connectdb->createVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
+                $this->template->createVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
             }
         } else {
             $versionFile = $this->getCSSVersionFile($file);
@@ -144,12 +150,12 @@ class Asset
     {
         $result = array();
         $result['update'] = false;
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $css_file = $this->trimCSSName($file);
             if (!empty($this->place)) {
                 $css_file .= '::'.$this->placeCSSName($this->place);
             }
-            $static_data = $this->connectdb->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
+            $static_data = $this->template->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
             $md5data = $static_data['tpl_md5'];
             $verhash = $static_data['tpl_verhash'];
             $expire_time = $static_data['tpl_expire_time'];
@@ -182,9 +188,9 @@ class Asset
     public function loadCSSFile($file)
     {
         $place = 'minified';
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $css_file = $this->trimCSSName($file);
-            $css_version = $this->connectdb->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
+            $css_version = $this->template->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
         } else {
             $versionfile = $this->getCSSVersionFile($file);
             $css_version = (!file_exists($versionfile)) ? false : true;
@@ -280,12 +286,12 @@ class Asset
             $place = (count($place) > 1) ? $place : $place[0];
         }
         $this->place = $place;
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $css_file = $this->trimCSSName($file);
             if (!empty($place)) {
                 $css_file .= '::'.$this->placeCSSName($place);
             }
-            $css_version = $this->connectdb->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
+            $css_version = $this->template->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
         } else {
             $versionfile = $this->getCSSVersionFile($file);
             $css_version = (!file_exists($versionfile)) ? false : true;
@@ -341,11 +347,11 @@ class Asset
         $verhash = Utils::generateRandom(7);
         //Insert md5 & verhash
         $expire_time = time();
-        if ($this->connectdb !== null) {
-            if ($this->connectdb->getVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js') !== false) {
-                $this->connectdb->updateVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
+        if ($this->connectdb !== null || $this->redis !== null) {
+            if ($this->template->getVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js') !== false) {
+                $this->template->updateVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
             } else {
-                $this->connectdb->createVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
+                $this->template->createVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
             }
         } else {
             $versionContent = $md5data."\r\n".$verhash."\r\n".$expire_time;
@@ -365,9 +371,9 @@ class Asset
     {
         $result = array();
         $result['update'] = false;
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $js_file = $this->trimJSName($file);
-            $static_data = $this->connectdb->getVersion(Utils::dashPath($this->options['js_dir']), $js_file, 'js');
+            $static_data = $this->template->getVersion(Utils::dashPath($this->options['js_dir']), $js_file, 'js');
             $md5data = $static_data['tpl_md5'];
             $verhash = $static_data['tpl_verhash'];
             $expire_time = $static_data['tpl_expire_time'];
@@ -392,9 +398,9 @@ class Asset
     //Load JS files
     public function loadJSFile($file)
     {
-        if ($this->connectdb !== null) {
+        if ($this->connectdb !== null || $this->redis !== null) {
             $js_file = $this->trimJSName($file);
-            $js_version = $this->connectdb->getVersion(Utils::dashPath($this->options['js_dir']), $js_file, 'js');
+            $js_version = $this->template->getVersion(Utils::dashPath($this->options['js_dir']), $js_file, 'js');
         } else {
             $versionfile = $this->getJSVersionFile($file);
             $js_version = (!file_exists($versionfile)) ? false : true;

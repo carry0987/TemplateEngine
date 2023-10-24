@@ -21,12 +21,12 @@ class DBController
         }
     }
 
-    public function getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type)
+    public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type)
     {
         $tpl_query = 'SELECT tpl_md5, tpl_expire_time, tpl_verhash FROM template WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
-            $tpl_stmt->execute([':path' => $get_tpl_path, ':name' => $get_tpl_name, ':type' => $get_tpl_type]);
+            $tpl_stmt->execute([':path' => $tpl_path, ':name' => $tpl_name, ':type' => $tpl_type]);
             $tpl_row = $tpl_stmt->fetch(\PDO::FETCH_ASSOC);
             if ($tpl_row != false) {
                 return $tpl_row;
