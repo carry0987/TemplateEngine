@@ -4,6 +4,7 @@ namespace carry0987\Template;
 class DBController
 {
     private $db = null;
+    private static $table = 'template';
 
     public function __construct(mixed $dbSettings)
     {
@@ -25,9 +26,16 @@ class DBController
         return $this->db !== null;
     }
 
+    public function setTableName(string $table)
+    {
+        self::$table = $table;
+        return $this;
+    }
+
     public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type)
     {
-        $tpl_query = 'SELECT tpl_md5, tpl_expire_time, tpl_verhash FROM template WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
+        $tpl_query = 'SELECT tpl_md5, tpl_expire_time, tpl_verhash FROM '.self::$table.'
+            WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
             $tpl_stmt->execute([':path' => $tpl_path, ':name' => $tpl_name, ':type' => $tpl_type]);
@@ -44,7 +52,8 @@ class DBController
 
     public function createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
     {
-        $tpl_query = 'INSERT INTO template (tpl_path, tpl_name, tpl_type, tpl_md5, tpl_expire_time, tpl_verhash) VALUES (:path, :name, :type, :md5, :expire_time, :verhash)';
+        $tpl_query = 'INSERT INTO '.self::$table.' (tpl_path, tpl_name, tpl_type, tpl_md5, tpl_expire_time, tpl_verhash)
+            VALUES (:path, :name, :type, :md5, :expire_time, :verhash)';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
             $tpl_stmt->execute([
@@ -63,7 +72,9 @@ class DBController
 
     public function updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
     {
-        $tpl_query = 'UPDATE template SET tpl_md5 = :md5, tpl_expire_time = :expire_time, tpl_verhash = :verhash WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
+        $tpl_query = 'UPDATE '.self::$table.'
+            SET tpl_md5 = :md5, tpl_expire_time = :expire_time, tpl_verhash = :verhash
+            WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
             $tpl_stmt->execute([
