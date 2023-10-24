@@ -33,12 +33,14 @@ class Template
 
     public function setDatabase(DBController $connectdb)
     {
+        if ($connectdb->isConnected() !== true) return;
         $this->connectdb = $connectdb;
         $this->asset->setDatabase($connectdb);
     }
 
     public function setRedis(RedisController $redis)
     {
+        if ($redis->isConnected() !== true) return;
         $this->redis = $redis;
         $this->asset->setRedis($redis);
     }

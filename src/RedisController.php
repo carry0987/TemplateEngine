@@ -5,23 +5,27 @@ use carry0987\Fiesta\RedisTool;
 
 class RedisController
 {
-    private $redis;
+    private $redis = null;
 
     public function __construct(mixed $redisConfig)
     {
         if ($redisConfig instanceof RedisTool) {
             $this->redis = $redisConfig;
-            return;
         }
-        if (is_array($redisConfig)) {
+        if ($this->redis === null && is_array($redisConfig)) {
             $this->redis = new RedisTool($redisConfig['host'], $redisConfig['port'], $redisConfig['password'], $redisConfig['database']);
-        } else {
-            throw new \InvalidArgumentException('Invalid Redis settings');
         }
+        return $this;
+    }
+
+    public function isConnected()
+    {
+        return $this->redis !== null;
     }
 
     public function getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type)
     {
+        if ($this->redis === null) return false;
         $tpl_key = "template::$get_tpl_path::$get_tpl_name::$get_tpl_type";
         $result = $this->redis->getHashValue('tpl', $tpl_key);
         if (!empty($result)) {
@@ -32,6 +36,7 @@ class RedisController
 
     public function createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
     {
+        if ($this->redis === null) return false;
         $tpl_key = "template::$tpl_path::$tpl_name::$tpl_type";
         $tpl_data = [
             "tpl_md5" => $tpl_md5,

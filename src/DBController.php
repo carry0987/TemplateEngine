@@ -3,22 +3,26 @@ namespace carry0987\Template;
 
 class DBController
 {
-    private $db;
+    private $db = null;
 
     public function __construct(mixed $dbSettings)
     {
         if ($dbSettings instanceof \PDO) {
             $this->db = $dbSettings;
-            return;
         }
-        if (!is_array($dbSettings)) {
-            throw new \InvalidArgumentException('Invalid database settings');
+        if ($this->db === null && is_array($dbSettings)) {
+            try {
+                $this->db = new \PDO('mysql:host='.$dbSettings['host'].';port='.$dbSettings['port'].';dbname='.$dbSettings['database'], $dbSettings['username'], $dbSettings['password']);
+            } catch (\PDOException $e) {
+                die('Connection failed: '.$e->getMessage());
+            }
         }
-        try {
-            $this->db = new \PDO('mysql:host='.$dbSettings['host'].';port='.$dbSettings['port'].';dbname='.$dbSettings['database'], $dbSettings['username'], $dbSettings['password']);
-        } catch (\PDOException $e) {
-            die('Connection failed: '.$e->getMessage());
-        }
+        return $this;
+    }
+
+    public function isConnected()
+    {
+        return $this->db !== null;
     }
 
     public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type)
