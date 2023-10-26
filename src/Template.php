@@ -283,6 +283,7 @@ class Template
 
         //Protect cache file
         $check_class = '<?php if (!class_exists(\'\\'.__NAMESPACE__.'\Template\')) die(\'Access Denied\'); ?>'."\r\n";
+        $check_class .= '<?php use \\'.__NAMESPACE__.'\Template as TPL; ?>'."\r\n";
         $check_class .= '<?php use \\'.__NAMESPACE__.'\Asset as Assets; ?>'."\r\n";
         $template = $check_class.$template;
 
@@ -388,7 +389,7 @@ class Template
 
     private function parse_language_var_1($matches)
     {
-        return $this->stripvTags('<? echo Template::langParam('.$matches[1].', '.$matches[2].');?>');
+        return $this->stripvTags('<? echo TPL::langParam('.$matches[1].', '.$matches[2].');?>');
     }
 
     private function parse_evaltags_1($matches)
