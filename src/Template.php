@@ -237,22 +237,22 @@ class Template
         //$template = preg_replace_callback("/$var_regexp/s", array($this, 'parse_addquote_1'), $template);
 
         //Replace template loading function
-        $template = preg_replace_callback("/\{template\s+([a-z0-9_:\/]+)\}/is", array($this, 'parse_stripvtags_template1'), $template);
-        $template = preg_replace_callback("/\{template\s+(.+?)\}/is", array($this, 'parse_stripvtags_template1'), $template);
+        $template = preg_replace_callback("/\{template\s+([a-z0-9_:\/]+)\}/is", array($this, 'parse_stripvtags_template_1'), $template);
+        $template = preg_replace_callback("/\{template\s+(.+?)\}/is", array($this, 'parse_stripvtags_template_1'), $template);
 
         //Replace echo function
         $template = preg_replace_callback("/\{echo\s+(.+?)\}/is", array($this, 'parse_stripvtags_echo1'), $template);
 
         //Replace cssloader
-        $template = preg_replace_callback("/\{loadcss\s+(\S+)\}/is", array($this, 'parse_stripvtags_css1'), $template);
+        $template = preg_replace_callback("/\{loadcss\s+(\S+)\}/is", array($this, 'parse_stripvtags_css_1'), $template);
         $template = preg_replace_callback("/\{loadcss\s+(\S+)\s+([a-z0-9_-]+)\}/is", array($this, 'parse_stripvtags_csstpl_1'), $template);
         $template = preg_replace_callback("/\{loadcss\s+(\S+)\s+$var_simple_regexp\}/is", array($this, 'parse_stripvtags_csstpl_2'), $template);
 
         //Replace jsloader
-        $template = preg_replace_callback("/\{loadjs\s+(\S+)\}/is", array($this, 'parse_stripvtags_js1'), $template);
+        $template = preg_replace_callback("/\{loadjs\s+(\S+)\}/is", array($this, 'parse_stripvtags_js_1'), $template);
 
         //Replace static file loader
-        $template = preg_replace_callback("/\{static\s+(\S+)\}/is", array($this, 'parse_stripvtags_static1'), $template);
+        $template = preg_replace_callback("/\{static\s+(\S+)\}/is", array($this, 'parse_static_1'), $template);
 
         //Replace if/else script
         $template = preg_replace_callback("/\{if\s+(.+?)\}/is", array($this, 'parse_stripvtags_if1'), $template);
@@ -407,12 +407,12 @@ class Template
         return $this->addQuote('<?='.$matches[1].'?>');
     }
 
-    private function parse_stripvtags_template1($matches)
+    private function parse_stripvtags_template_1($matches)
     {
         return $this->stripvTags('<? include(Assets::getInstance()->loadTemplate(\''.$matches[1].'.html\'));?>');
     }
 
-    private function parse_stripvtags_css1($matches)
+    private function parse_stripvtags_css_1($matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
         return $this->stripvTags('<? echo Assets::getInstance()->loadCSSFile(\''.$matches[1].'\');?>');
@@ -430,16 +430,16 @@ class Template
         return $this->stripvTags('<? echo Assets::getInstance()->loadCSSTemplate(\''.$matches[1].'\', '.$matches[2].');?>');
     }
 
-    private function parse_stripvtags_js1($matches)
+    private function parse_stripvtags_js_1($matches)
     {
         if ($this->options['js_dir'] === false) return $matches[1];
         return $this->stripvTags('<? echo Assets::getInstance()->loadJSFile(\''.$matches[1].'\');?>');
     }
 
-    private function parse_stripvtags_static1($matches)
+    private function parse_static_1($matches)
     {
         if ($this->options['static_dir'] === false) return $matches[1];
-        return $this->stripvTags($this->options['static_dir'].$matches[1]);
+        return $this->options['static_dir'].$matches[1];
     }
 
     private function parse_stripvtags_echo1($matches)
@@ -532,31 +532,33 @@ class Template
         return $pos !== false ? substr($content, $pos + 1) : $content;
     }
 
-    private function transAmp($str)
+    private function transAmp(mixed $str)
     {
         $str = str_replace('&', '&amp;', $str);
         $str = str_replace('&amp;amp;', '&amp;', $str);
         return $str;
     }
 
-    private function addQuote($var)
+    private function addQuote(mixed $var)
     {
         return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
     }
 
-    private function stripvTags($expr, $statement = '')
+    //Replace variable output
+    private function stripvTags(mixed $expr, mixed $statement = null)
     {
         $expr = str_replace('\\\"', '\"', preg_replace("/\<\?\=(\\\$.+?)\?\>/s", "\\1", $expr));
+        if (empty($statement)) return $expr;
         $statement = str_replace('\\\"', '\"', $statement);
         return $expr.$statement;
     }
 
-    private function stripStyleTags($css)
+    private function stripStyleTags(string $css)
     {
         return '<style type="text/css">'.$css.'</style>';
     }
 
-    private function stripScriptAmp($s, $extra)
+    private function stripScriptAmp(mixed $s, string $extra)
     {
         $s = str_replace('&amp;', '&', $s);
         return "<script src=\"$s\"$extra></script>";

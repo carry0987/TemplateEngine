@@ -37,6 +37,7 @@ $template->setOptions($options);
 $template->setDatabase($database);
 $template->setRedis($redis);
 
+$meme = 'Sad-Meme';
 $array = array('testa' => 'a', 'testb' => 'b');
 //Include template file
 include($template->loadTemplate('template.html'));
