@@ -1,4 +1,5 @@
 # TemplateEngine
+[![Packgist](https://img.shields.io/packagist/v/carry0987/template-engine.svg?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)  
 Light &amp; fast php template engine, using Composer
 
 ## Installation
