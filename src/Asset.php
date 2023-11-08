@@ -52,7 +52,8 @@ class Asset
         if ($this->template === null) {
             self::throwError('Template class not found');
         }
-        $this->template->loadTemplate($file);
+
+        return $this->template->loadTemplate($file);
     }
 
     /* Static file cache */
