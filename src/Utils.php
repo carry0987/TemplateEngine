@@ -25,7 +25,6 @@ class Utils
         return $hash.$path;
     }
 
-
     public static function makePath(string $path)
     {
         $dirs = explode(Template::DIR_SEP, dirname(self::trimPath($path)));
