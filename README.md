@@ -1,6 +1,8 @@
 # TemplateEngine
-[![Packgist](https://img.shields.io/packagist/v/carry0987/template-engine.svg?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)  
-Light &amp; fast php template engine, using Composer
+[![Packagist](https://img.shields.io/packagist/v/carry0987/template-engine.svg?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)  
+A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis and MySQL.
+
+This powerful yet simple template engine provides the flexibility to store and cache your templates in various ways. Whether you're looking to save your templates locally, cache them with longevity in mind, nest template files for complex designs, utilize persistent storage with Redis, or manage templates through MySQL databases, this engine is equipped to handle your needs efficiently and with ease.
 
 ## Installation
 ```bash
@@ -15,37 +17,33 @@ composer require carry0987/template-engine
 - Cache lifetime
 
 ## Usage
-Now you can choose saving version of template file to local or database  
+You can choose saving version of template file to Database or Redis  
 
-Save to local
+Save to the database
 ```php
-//Template setting
-$options = array(
-    'template_dir' => 'template',
-    'css_dir' => 'static/css/', //Set css file's cache
-    'js_dir' => 'static/js/', //Set js file's cache
-    'static_dir' => 'static/', //Set static file's directory
-    'auto_update' => true, //Set 'false' to turn off auto update template
-    'cache_lifetime' => 0, //Set cache file's lifetime (minute)
-    'cache_db' => false //Set 'false' to save cache version at local directory
+// Database configuration
+$config = array(
+    'host' => 'localhost',
+    'port' => 3306,
+    'database' => 'template',
+    'username' => 'root',
+    'password' => ''
 );
+$database = new DBController($config);
 ```
-Save to database
-```php
-//Connect to Database
-$connectdb = new mysqli('localhost', 'root', 'root', 'template');
 
-//Template setting
-$options = array(
-    'template_dir' => 'template',
-    'css_dir' => 'static/css/', //Set css file's cache
-    'js_dir' => 'static/js/', //Set js file's cache
-    'static_dir' => 'static/', //Set static file's directory
-    'auto_update' => true, //Set 'false' to turn off auto update template
-    'cache_lifetime' => 0, //Set cache file's lifetime (minute)
-    'cache_db' => $connectdb //Give connection variable to save cache version into database
+Save to Redis
+```php
+// Redis configuration
+$redisConfig = array(
+    'host' => 'redis',
+    'port' => 6379,
+    'password' => '',
+    'database' => 1
 );
+$redis = new RedisController($redisConfig);
 ```
+
 ## Cache CSS &amp; JS File
 #### CSS Cache
 **Cache specific part of CSS**  
