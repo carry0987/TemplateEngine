@@ -38,7 +38,7 @@ class Asset
         $this->options = $options;
     }
 
-    public function loadTemplate($file)
+    public function loadTemplate(string $file)
     {
         if ($this->template === null) {
             self::throwError('Template class not found');
@@ -50,22 +50,22 @@ class Asset
     /* Static file cache */
     /* CSS */
     //Get CSS file path
-    private function trimCSSName($file)
+    private function trimCSSName(string $file)
     {
         return str_replace('.css', '', $file);
     }
 
-    private function placeCSSName($place)
+    private function placeCSSName(string | array $place)
     {
         return (is_array($place)) ? substr(md5(implode('-', $place)), 0, 6) : $place;
     }
 
-    private function getCSSFile($file)
+    private function getCSSFile(string $file)
     {
         return Utils::trimPath($this->options['css_dir'].Template::DIR_SEP.$file);
     }
 
-    private function getCSSCache($file, $place)
+    private function getCSSCache(string $file, string | array $place)
     {
         $file = Utils::trimRelativePath($file);
         $place = $this->placeCSSName($place);
@@ -74,7 +74,7 @@ class Asset
     }
 
     //Get CSS version file path
-    private function getCSSVersionFile($file)
+    private function getCSSVersionFile(string $file)
     {
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.cssversion.json', $file);
@@ -82,7 +82,7 @@ class Asset
     }
 
     //Store CSS version value
-    private function cssSaveVersion($file, $css_md5 = null)
+    private function cssSaveVersion(string $file, string $css_md5 = null)
     {
         //Get CSS file
         $css_file = $this->getCSSFile($file);
@@ -138,7 +138,7 @@ class Asset
     }
 
     //Check CSS file's change
-    private function cssVersionCheck($file, $css_md5 = null)
+    private function cssVersionCheck(string $file, string $css_md5 = null)
     {
         $result = array();
         $result['update'] = false;
@@ -202,7 +202,7 @@ class Asset
     }
 
     //Parse CSS File
-    private function parseCSSFile(string $file, $place)
+    private function parseCSSFile(string $file, string | array $place)
     {
         $css_tplfile = $this->getCSSFile($file);
         if (!is_readable($css_tplfile)) {
@@ -223,7 +223,7 @@ class Asset
     }
 
     //Parse CSS Template
-    private function parseCSSTemplate($file, $place, $get_md5 = false)
+    private function parseCSSTemplate(string $file, string | array $place, bool $get_md5 = false)
     {
         $css_tplfile = $this->getCSSFile($file);
         if (!is_readable($css_tplfile)) {
@@ -258,7 +258,7 @@ class Asset
         return $cachefile;
     }
 
-    private function parse_csstpl($result, $matches, $param)
+    private function parse_csstpl(int $result, array $matches, string $param)
     {
         $content = false;
         if ($result === 1) {
@@ -272,7 +272,7 @@ class Asset
     }
 
     //Load CSS Template
-    public function loadCSSTemplate($file, $place)
+    public function loadCSSTemplate(string $file, string | array $place)
     {
         if (is_array($place)) {
             $place = (count($place) > 1) ? $place : $place[0];
@@ -306,18 +306,18 @@ class Asset
 
     /* JS */
     //Get JS file path
-    private function trimJSName($file)
+    private function trimJSName(string $file)
     {
         return str_replace('.js', '', $file);
     }
 
-    private function getJSFile($file)
+    private function getJSFile(string $file)
     {
         return Utils::trimPath($this->options['js_dir'].Template::DIR_SEP.$file);
     }
 
     //Get JS version file path
-    private function getJSVersionFile($file)
+    private function getJSVersionFile(string $file)
     {
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.jsversion.txt', $file);
@@ -325,7 +325,7 @@ class Asset
     }
 
     //Store JS version value
-    private function jsSaveVersion($file)
+    private function jsSaveVersion(string $file)
     {
         //Get JS file
         $js_file = $this->getJSFile($file);
@@ -359,7 +359,7 @@ class Asset
     }
 
     //Check JS file's change
-    private function jsVersionCheck($file)
+    private function jsVersionCheck(string $file)
     {
         $result = array();
         $result['update'] = false;
@@ -388,7 +388,7 @@ class Asset
     }
 
     //Load JS files
-    public function loadJSFile($file)
+    public function loadJSFile(string $file)
     {
         if ($this->connectdb !== null || $this->redis !== null) {
             $js_file = $this->trimJSName($file);

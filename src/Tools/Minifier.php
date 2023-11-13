@@ -4,7 +4,7 @@ namespace carry0987\Template\Tools;
 class Minifier
 {
     // Minify HTML
-    public static function minifyHTML($html)
+    public static function minifyHTML(string $html)
     {
         $search = array(
             '/\>[^\S ]+/s',
@@ -13,11 +13,12 @@ class Minifier
         );
         $replace = array('>', '<', '\\1', '');
         $html = preg_replace($search, $replace, $html);
+
         return $html;
     }
 
     //Minify CSS
-    public static function minifyCSS($content)
+    public static function minifyCSS(string $content)
     {
         //Remove comments
         $content = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $content);
@@ -46,6 +47,7 @@ class Minifier
         for ($i = 0; $i < count($hit[1]); $i++) {
             $content = str_replace('##########'.$i.'##########', $hit[1][$i], $content);
         }
+
         return $content;
     }
 }

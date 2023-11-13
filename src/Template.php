@@ -126,18 +126,18 @@ class Template
         }
     }
 
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $this->setTemplate($name, $value);
     }
 
-    public function compressHTML($html)
+    public function compressHTML(bool $html)
     {
         $this->compress['html'] = $html;
         self::$asset->compress['html'] = $html;
     }
 
-    public function compressCSS($css)
+    public function compressCSS(bool $css)
     {
         $this->compress['css'] = $css;
         self::$asset->compress['css'] = $css;
@@ -149,7 +149,7 @@ class Template
     }
 
     /* Template file cache */
-    public function loadTemplate($file)
+    public function loadTemplate(string $file)
     {
         if ($this->connectdb !== null || $this->redis !== null) {
             $versionContent = $this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html');
@@ -172,18 +172,19 @@ class Template
                 $this->parseTemplate($file);
             }
         }
+
         return $cachefile;
     }
 
     /* Check template expiration and md5 */
-    private function checkTemplate($file)
+    private function checkTemplate(string $file)
     {
         $check_tpl = false;
         if ($this->connectdb !== null || $this->redis !== null) {
             $versionContent = $this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html');
             if ($versionContent !== false) {
                 $md5data = $versionContent['tpl_md5'];
-                $expire_time = $versionContent['tpl_expire_time'];
+                $expire_time = (int) $versionContent['tpl_expire_time'];
             } else {
                 $this->parseTemplate($file);
                 $check_tpl = true;
@@ -192,7 +193,7 @@ class Template
             $versionfile = $this->getTplVersionFile($file);
             $versionContent = file($versionfile, FILE_IGNORE_NEW_LINES);
             $md5data = $versionContent[0];
-            $expire_time = $versionContent[1];
+            $expire_time = (int) $versionContent[1];
         }
         if ($check_tpl === false) {
             if ($this->options['auto_update'] === true && md5_file($this->getTplFile($file)) !== $md5data) {
@@ -205,7 +206,7 @@ class Template
     }
 
     //Parse template file
-    private function parseTemplate($file)
+    private function parseTemplate(string $file)
     {
         $tplfile = $this->getTplFile($file);
         if (!is_readable($tplfile)) {
@@ -317,9 +318,8 @@ class Template
         if ($this->connectdb !== null || $this->redis !== null) {
             //Insert md5 and expiretime into cache database
             $md5data = md5_file($tplfile);
-            $expire_time = time();
             $versionContent['tpl_md5'] = $md5data;
-            $versionContent['tpl_expire_time'] = $expire_time;
+            $versionContent['tpl_expire_time'] = time();
             if ($this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html') !== false) {
                 $this->updateVersion(Utils::dashPath($this->options['template_dir']), $file, 'html', $versionContent['tpl_md5'], $versionContent['tpl_expire_time'], '0');
             } else {
@@ -340,24 +340,26 @@ class Template
         return str_replace('.html', '', $file);
     }
 
-    private function getTplFile($file)
+    private function getTplFile(string $file)
     {
         return Utils::trimPath($this->options['template_dir'].self::DIR_SEP.$file);
     }
 
-    private function getTplCache($file)
+    private function getTplCache(string $file)
     {
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.cache.php', $file);
+
         return Utils::trimPath($this->options['cache_dir'].self::DIR_SEP.$file);
     }
 
-    private function getTplVersionFile($file)
+    private function getTplVersionFile(string $file)
     {
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.htmlversion.txt', $file);
+
         return Utils::trimPath($this->options['cache_dir'].self::DIR_SEP.$file);
     }
 
-    public function getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type)
+    public function getVersion(string $get_tpl_path, string $get_tpl_name, string $get_tpl_type)
     {
         if ($this->redis !== null) {
             $redis = $this->redis->getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type);
@@ -366,10 +368,11 @@ class Template
         if ($this->connectdb !== null) {
             return $this->connectdb->getVersion($get_tpl_path, $get_tpl_name, $get_tpl_type);
         }
+
         return false;
     }
 
-    public function createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
+    public function createVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_md5, int $tpl_expire_time, string $tpl_verhash)
     {
         if ($this->redis !== null) {
             $redis = $this->redis->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
@@ -380,7 +383,7 @@ class Template
         }
     }
 
-    public function updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash)
+    public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_md5, int $tpl_expire_time, string $tpl_verhash)
     {
         if ($this->redis !== null) {
             $redis = $this->redis->updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_md5, $tpl_expire_time, $tpl_verhash);
@@ -391,137 +394,146 @@ class Template
         }
     }
 
-    private function parse_language_var_1($matches)
+    private function parse_language_var_1(array $matches)
     {
         return $this->stripvTags('<? echo TPL::langParam('.$matches[1].', '.$matches[2].');?>');
     }
 
-    private function parse_evaltags_1($matches)
+    private function parse_evaltags_1(array $matches)
     {
         return $this->evalTags($matches[1]);
     }
 
-    private function parse_evaltags_2($matches)
+    private function parse_evaltags_2(array $matches)
     {
         return $this->evalTags($matches[2]);
     }
 
-    private function parse_addquote_1($matches)
+    private function parse_addquote_1(array $matches)
     {
         return $this->addQuote('<?='.$matches[1].'?>');
     }
 
-    private function parse_stripvtags_template_1($matches)
+    private function parse_stripvtags_template_1(array $matches)
     {
         $matches[1] = $this->trimTplName($matches[1]);
+
         return $this->stripvTags('<? include(TPL::getAsset()->loadTemplate(\''.$matches[1].'.html\'));?>');
     }
 
-    private function parse_stripvtags_css_1($matches)
+    private function parse_stripvtags_css_1(array $matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
+
         return $this->stripvTags('<? echo TPL::getAsset()->loadCSSFile(\''.$matches[1].'\');?>');
     }
 
-    private function parse_stripvtags_csstpl_1($matches)
+    private function parse_stripvtags_csstpl_1(array $matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
+
         return $this->stripvTags('<? echo TPL::getAsset()->loadCSSTemplate(\''.$matches[1].'\', \''.$matches[2].'\');?>');
     }
 
-    private function parse_stripvtags_csstpl_2($matches)
+    private function parse_stripvtags_csstpl_2(array $matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
+
         return $this->stripvTags('<? echo TPL::getAsset()->loadCSSTemplate(\''.$matches[1].'\', '.$matches[2].');?>');
     }
 
-    private function parse_stripvtags_js_1($matches)
+    private function parse_stripvtags_js_1(array $matches)
     {
         if ($this->options['js_dir'] === false) return $matches[1];
+
         return $this->stripvTags('<? echo TPL::getAsset()->loadJSFile(\''.$matches[1].'\');?>');
     }
 
-    private function parse_static_1($matches)
+    private function parse_static_1(array $matches)
     {
         if ($this->options['static_dir'] === false) return $matches[1];
+
         return $this->options['static_dir'].$matches[1];
     }
 
-    private function parse_stripvtags_echo1($matches)
+    private function parse_stripvtags_echo1(array $matches)
     {
         return $this->stripvTags('<? echo '.$matches[1].';?>');
     }
 
-    private function parse_stripvtags_if1($matches)
+    private function parse_stripvtags_if1(array $matches)
     {
         return $this->stripvTags('<? if ('.$matches[1].') { ?>');
     }
 
-    private function parse_stripvtags_elseif1($matches)
+    private function parse_stripvtags_elseif1(array $matches)
     {
         return $this->stripvTags('<? } elseif ('.$matches[1].') { ?>');
     }
 
-    private function parse_stripvtags_loop12($matches)
+    private function parse_stripvtags_loop12(array $matches)
     {
         return $this->stripvTags('<? if (is_array('.$matches[1].')) foreach ('.$matches[1].' as '.$matches[2].') { ?>');
     }
 
-    private function parse_stripvtags_loop123($matches)
+    private function parse_stripvtags_loop123(array $matches)
     {
         return $this->stripvTags('<? if (is_array('.$matches[1].')) foreach ('.$matches[1].' as '.$matches[2].' => '.$matches[3].') { ?>');
     }
 
-    private function parse_transamp_0($matches)
+    private function parse_transamp_0(array $matches)
     {
         return $this->transAmp($matches[0]);
     }
 
-    private function parse_css_minify($matches)
+    private function parse_css_minify(array $matches)
     {
         return $this->stripStyleTags(Minifier::minifyCSS($matches[1]));
     }
 
-    private function parse_stripscriptamp_12($matches)
+    private function parse_stripscriptamp_12(array $matches)
     {
         return $this->stripScriptAmp($matches[1], $matches[2]);
     }
 
-    private function parse_stripblock_12($matches)
+    private function parse_stripblock_12(array $matches)
     {
         return $this->stripBlock($matches[1], $matches[2]);
     }
 
-    public static function langParam($value, $param)
+    public static function langParam(string $value, array $param)
     {
         foreach ($param as $index => $p) {
             $value = str_replace('{'.$index.'}', $p, $value);
         }
+
         return $value;
     }
 
-    private function stripBlock($var, $s)
+    private function stripBlock(string $var, string $subject)
     {
-        $s = preg_replace("/<\?=\\\$(.+?)\?>/", "{\$\\1}", $s);
-        preg_match_all("/<\?=(.+?)\?>/", $s, $constary);
+        $subject = preg_replace("/<\?=\\\$(.+?)\?>/", "{\$\\1}", $subject);
+        preg_match_all("/<\?=(.+?)\?>/", $subject, $constary);
         $constadd = '';
         $constary[1] = array_unique($constary[1]);
         foreach ($constary[1] as $const) {
             $constadd .= '$__'.$const.' = '.$const.';';
         }
-        $s = preg_replace("/<\?=(.+?)\?>/", "{\$__\\1}", $s);
-        $s = str_replace('?>', "\n\$$var .= <<<EOF\n", $s);
-        $s = str_replace('<?', "\nEOF;\n", $s);
-        $s = str_replace("\nphp ", "\n", $s);
-        return "<?\n$constadd\$$var = <<<EOF".$s."EOF;\n?>";
+        $subject = preg_replace("/<\?=(.+?)\?>/", "{\$__\\1}", $subject);
+        $subject = str_replace('?>', "\n\$$var .= <<<EOF\n", $subject);
+        $subject = str_replace('<?', "\nEOF;\n", $subject);
+        $subject = str_replace("\nphp ", "\n", $subject);
+
+        return "<?\n$constadd\$$var = <<<EOF".$subject."EOF;\n?>";
     }
 
-    private function evalTags($php)
+    private function evalTags(string $php)
     {
         $php = str_replace('\"', '"', $php);
         $i = count($this->replacecode['search']);
         $this->replacecode['search'][$i] = $search = '<!--EVAL_TAG_'.$i.'-->';
         $this->replacecode['replace'][$i] = '<? '."\n".$php."\n".'?>';
+
         return $search;
     }
 
@@ -529,6 +541,7 @@ class Template
     {
         $str = str_replace('&', '&amp;', $str);
         $str = str_replace('&amp;amp;', '&amp;', $str);
+
         return $str;
     }
 
@@ -543,6 +556,7 @@ class Template
         $expr = str_replace('\\\"', '\"', preg_replace("/\<\?\=(\\\$.+?)\?\>/s", "\\1", $expr));
         if (empty($statement)) return $expr;
         $statement = str_replace('\\\"', '\"', $statement);
+
         return $expr.$statement;
     }
 
@@ -554,6 +568,7 @@ class Template
     private function stripScriptAmp(mixed $s, string $extra)
     {
         $s = str_replace('&amp;', '&', $s);
+
         return "<script src=\"$s\"$extra></script>";
     }
 

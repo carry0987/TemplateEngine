@@ -5,7 +5,7 @@ use carry0987\Template\Template;
 
 class Utils
 {
-    public static function dashPath($path)
+    public static function dashPath(string $path)
     {
         $path = ltrim($path, '/\\');
         $path = rtrim($path, '/\\');
@@ -13,12 +13,12 @@ class Utils
         return str_replace(array('/', '\\', '//', '\\\\'), '::', $path);
     }
 
-    public static function trimPath($path)
+    public static function trimPath(string $path)
     {
         return str_replace(array('/', '\\', '//', '\\\\'), Template::DIR_SEP, $path);
     }
 
-    public static function trimRelativePath($path)
+    public static function trimRelativePath(string $path)
     {
         $hash = substr_count($path, '../');
         $hash = ($hash !== 0) ? substr(md5($hash), 0, 6).'/' : '';
