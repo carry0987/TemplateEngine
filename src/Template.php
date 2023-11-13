@@ -9,18 +9,22 @@ use carry0987\Template\Tools\Utils;
 
 class Template
 {
-    private $asset = null;
     private $connectdb = null;
     private $redis = null;
     private $replacecode = array('search' => array(), 'replace' => array());
     private $options = array();
     private $compress = array('html' => false, 'css' => true);
+
+    private static $asset = null;
+
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
     // Construct options
     public function __construct()
     {
-        $this->asset = new Asset($this);
+        if (self::$asset === null) {
+            self::$asset = new Asset($this);
+        }
         $this->options = array(
             'template_dir' => 'templates'.self::DIR_SEP,
             'css_dir' => 'css'.self::DIR_SEP,
@@ -36,14 +40,14 @@ class Template
     {
         if ($connectdb->isConnected() !== true) return;
         $this->connectdb = $connectdb;
-        $this->asset->setDatabase($connectdb);
+        self::$asset->setDatabase($connectdb);
     }
 
     public function setRedis(RedisController $redis)
     {
         if ($redis->isConnected() !== true) return;
         $this->redis = $redis;
-        $this->asset->setRedis($redis);
+        self::$asset->setRedis($redis);
     }
 
     // Set template parameter array
@@ -52,7 +56,7 @@ class Template
         foreach ($options as $name => $value) {
             $this->setTemplate($name, $value);
         }
-        $this->asset->setOptions($this->options);
+        self::$asset->setOptions($this->options);
     }
 
     // Set template parameter
@@ -129,13 +133,18 @@ class Template
     public function compressHTML($html)
     {
         $this->compress['html'] = $html;
-        $this->asset->compress['html'] = $html;
+        self::$asset->compress['html'] = $html;
     }
 
     public function compressCSS($css)
     {
         $this->compress['css'] = $css;
-        $this->asset->compress['css'] = $css;
+        self::$asset->compress['css'] = $css;
+    }
+
+    public static function getAsset()
+    {
+        return self::$asset;
     }
 
     /* Template file cache */
@@ -223,9 +232,6 @@ class Template
         //Language
         $template = preg_replace_callback("/\{lang\s+(\S+)\s+(\S+)\}/is", array($this, 'parse_language_var_1'), $template);
 
-        //Replace block tag
-        //$template = preg_replace_callback("/\{block\/(\d+?)\}/i", array($this, 'parse_blocktags_1'), $template);
-
         //Replace eval function
         $template = preg_replace_callback("/\{eval\}\s*(\<\!\-\-)*(.+?)(\-\-\>)*\s*\{\/eval\}/is", array($this, 'parse_evaltags_2'), $template);
         $template = preg_replace_callback("/\{eval\s+(.+?)\s*\}/is", array($this, 'parse_evaltags_1'), $template);
@@ -233,9 +239,6 @@ class Template
         //Replace direct variable output
         $template = preg_replace("/\{\h*(\\\$[a-zA-Z0-9_\-\>\[\]\'\"\$\.\x7f-\xff]+)\h*\}/s", "<?=\\1?>", $template);
         $template = preg_replace_callback("/\<\?\=\<\?\=$var_regexp\?\>\?\>/s", array($this, 'parse_addquote_1'), $template);
-
-        //Replace $var
-        //$template = preg_replace_callback("/$var_regexp/s", array($this, 'parse_addquote_1'), $template);
 
         //Replace template loading function
         $template = preg_replace_callback("/\{template\s+([a-z0-9_:\/]+)\}/is", array($this, 'parse_stripvtags_template_1'), $template);
@@ -285,7 +288,6 @@ class Template
         //Protect cache file
         $check_class = '<?php if (!class_exists(\'\\'.__NAMESPACE__.'\Template\')) die(\'Access Denied\'); ?>'."\r\n";
         $check_class .= '<?php use \\'.__NAMESPACE__.'\Template as TPL; ?>'."\r\n";
-        $check_class .= '<?php use \\'.__NAMESPACE__.'\Asset as Assets; ?>'."\r\n";
         $template = $check_class.$template;
 
         //Minify HTML
@@ -332,7 +334,7 @@ class Template
         }
     }
 
-    private function trimTplName($file)
+    private function trimTplName(string $file)
     {
         return str_replace('.html', '', $file);
     }
@@ -410,31 +412,32 @@ class Template
 
     private function parse_stripvtags_template_1($matches)
     {
-        return $this->stripvTags('<? include(Assets::getInstance()->loadTemplate(\''.$matches[1].'.html\'));?>');
+        $matches[1] = $this->trimTplName($matches[1]);
+        return $this->stripvTags('<? include(TPL::getAsset()->loadTemplate(\''.$matches[1].'.html\'));?>');
     }
 
     private function parse_stripvtags_css_1($matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
-        return $this->stripvTags('<? echo Assets::getInstance()->loadCSSFile(\''.$matches[1].'\');?>');
+        return $this->stripvTags('<? echo TPL::getAsset()->loadCSSFile(\''.$matches[1].'\');?>');
     }
 
     private function parse_stripvtags_csstpl_1($matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
-        return $this->stripvTags('<? echo Assets::getInstance()->loadCSSTemplate(\''.$matches[1].'\', \''.$matches[2].'\');?>');
+        return $this->stripvTags('<? echo TPL::getAsset()->loadCSSTemplate(\''.$matches[1].'\', \''.$matches[2].'\');?>');
     }
 
     private function parse_stripvtags_csstpl_2($matches)
     {
         if ($this->options['css_dir'] === false) return $matches[1];
-        return $this->stripvTags('<? echo Assets::getInstance()->loadCSSTemplate(\''.$matches[1].'\', '.$matches[2].');?>');
+        return $this->stripvTags('<? echo TPL::getAsset()->loadCSSTemplate(\''.$matches[1].'\', '.$matches[2].');?>');
     }
 
     private function parse_stripvtags_js_1($matches)
     {
         if ($this->options['js_dir'] === false) return $matches[1];
-        return $this->stripvTags('<? echo Assets::getInstance()->loadJSFile(\''.$matches[1].'\');?>');
+        return $this->stripvTags('<? echo TPL::getAsset()->loadJSFile(\''.$matches[1].'\');?>');
     }
 
     private function parse_static_1($matches)
@@ -519,23 +522,6 @@ class Template
         $this->replacecode['search'][$i] = $search = '<!--EVAL_TAG_'.$i.'-->';
         $this->replacecode['replace'][$i] = '<? '."\n".$php."\n".'?>';
         return $search;
-    }
-
-    public function loadCSS(string $file)
-    {
-        return $this->asset->loadCSSFile($file);
-    }
-
-    private function stripPHPCode($type, $code)
-    {
-        $this->phpcode[$type][] = $code;
-        return '{phpcode:'.$type.'/'.(count($this->phpcode[$type]) - 1).'}';
-    }
-
-    private function getPHPTemplate($content)
-    {
-        $pos = strpos($content, "\n");
-        return $pos !== false ? substr($content, $pos + 1) : $content;
     }
 
     private function transAmp(mixed $str)

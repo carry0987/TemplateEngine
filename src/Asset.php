@@ -9,7 +9,6 @@ use carry0987\Template\Tools\Utils;
 class Asset
 {
     private $options = array();
-    private $blocks = array();
     private $place = '';
     private $connectdb = null;
     private $redis = null;
