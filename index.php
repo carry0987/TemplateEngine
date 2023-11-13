@@ -2,8 +2,8 @@
 require dirname(__FILE__).'/vendor/autoload.php';
 
 use carry0987\Template\Template;
-use carry0987\Template\DBController;
-use carry0987\Template\RedisController;
+use carry0987\Template\Controller\DBController;
+use carry0987\Template\Controller\RedisController;
 
 //Template setting
 $options = array(
@@ -20,14 +20,14 @@ $options = array(
 $config = array(
     'host' => 'mariadb',
     'port' => 3306,
-    'database' => 'template',
-    'username' => 'root',
-    'password' => '',
+    'database' => 'dev_tpl',
+    'username' => 'test_user',
+    'password' => 'test1234',
 );
 $redisCofig = array(
     'host' => 'redis',
     'port' => 6379,
-    'password' => '',
+    'password' => 'test1234',
     'database' => 5,
 );
 $database = new DBController($config);

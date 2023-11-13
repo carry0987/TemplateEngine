@@ -1,5 +1,7 @@
 <?php
-namespace carry0987\Template;
+namespace carry0987\Template\Tools;
+
+use carry0987\Template\Template;
 
 class Utils
 {

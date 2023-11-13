@@ -1,5 +1,5 @@
 <?php
-namespace carry0987\Template;
+namespace carry0987\Template\Controller;
 
 class DBController
 {

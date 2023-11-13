@@ -1,9 +1,13 @@
 <?php
 namespace carry0987\Template;
 
+use carry0987\Template\Controller\DBController;
+use carry0987\Template\Controller\RedisController;
+use carry0987\Template\Tools\Minifier;
+use carry0987\Template\Tools\Utils;
+
 class Asset
 {
-    private static $instance;
     private $options = array();
     private $blocks = array();
     private $place = '';
@@ -12,18 +16,10 @@ class Asset
     private $template = null;
     public $compress = array('html' => false, 'css' => true);
 
-    //Get Instance
-    public static function getInstance()
-    {
-        if (!self::$instance instanceof self) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     //Constructor
-    private function __construct()
+    public function __construct(Template $template)
     {
+        $this->template = $template;
     }
 
     public function setDatabase(DBController $connectdb)
@@ -34,11 +30,6 @@ class Asset
     public function setRedis(RedisController $redis)
     {
         $this->redis = $redis;
-    }
-
-    public function setTemplate(Template $template)
-    {
-        $this->template = $template;
     }
 
     // Set options
@@ -186,7 +177,7 @@ class Asset
     }
 
     //Load CSS files
-    public function loadCSSFile($file)
+    public function loadCSSFile(string $file)
     {
         $place = 'minified';
         if ($this->connectdb !== null || $this->redis !== null) {
@@ -211,7 +202,7 @@ class Asset
     }
 
     //Parse CSS File
-    private function parseCSSFile($file, $place)
+    private function parseCSSFile(string $file, $place)
     {
         $css_tplfile = $this->getCSSFile($file);
         if (!is_readable($css_tplfile)) {

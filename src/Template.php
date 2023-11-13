@@ -1,25 +1,26 @@
 <?php
 namespace carry0987\Template;
 
-use carry0987\Template\DBController;
 use carry0987\Template\Asset;
-use carry0987\Template\Minifier;
+use carry0987\Template\Controller\DBController;
+use carry0987\Template\Controller\RedisController;
+use carry0987\Template\Tools\Minifier;
+use carry0987\Template\Tools\Utils;
 
 class Template
 {
     private $asset = null;
+    private $connectdb = null;
+    private $redis = null;
     private $replacecode = array('search' => array(), 'replace' => array());
     private $options = array();
     private $compress = array('html' => false, 'css' => true);
-    private $connectdb = null;
-    private $redis = null;
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
     // Construct options
     public function __construct()
     {
-        $this->asset = Asset::getInstance();
-        $this->asset->setTemplate($this);
+        $this->asset = new Asset($this);
         $this->options = array(
             'template_dir' => 'templates'.self::DIR_SEP,
             'css_dir' => 'css'.self::DIR_SEP,
@@ -55,7 +56,7 @@ class Template
     }
 
     // Set template parameter
-    private function setTemplate($name, $value)
+    private function setTemplate(string $name, mixed $value)
     {
         switch ($name) {
             case 'template_dir':
@@ -518,6 +519,11 @@ class Template
         $this->replacecode['search'][$i] = $search = '<!--EVAL_TAG_'.$i.'-->';
         $this->replacecode['replace'][$i] = '<? '."\n".$php."\n".'?>';
         return $search;
+    }
+
+    public function loadCSS(string $file)
+    {
+        return $this->asset->loadCSSFile($file);
     }
 
     private function stripPHPCode($type, $code)
