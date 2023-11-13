@@ -16,6 +16,7 @@ class RedisController
         if ($this->redis === null && is_array($redisConfig)) {
             $this->redis = new RedisTool($redisConfig['host'], $redisConfig['port'], $redisConfig['password'], $redisConfig['database']);
         }
+
         return $this;
     }
 
@@ -27,6 +28,7 @@ class RedisController
     public function setHashName(string $hash)
     {
         $this->hash = $hash;
+
         return $this;
     }
 
@@ -38,6 +40,7 @@ class RedisController
         if (!empty($result)) {
             return unserialize($result);
         }
+
         return false;
     }
 
@@ -50,6 +53,7 @@ class RedisController
             "tpl_expire_time" => $tpl_expire_time,
             "tpl_verhash" => $tpl_verhash,
         ];
+
         return $this->redis->setHashValue($this->hash, $tpl_key, serialize($tpl_data));
     }
 
@@ -65,6 +69,7 @@ class RedisController
             $tpl_data = $this->redis->getHashValue('template', 'template:'.$tpl_id);
             return $tpl_data ? unserialize($tpl_data) : null;
         }
+
         return null;
     }
 }

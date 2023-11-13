@@ -1,6 +1,8 @@
 <?php
 namespace carry0987\Template\Controller;
 
+use carry0987\Template\Exception\ControllerException;
+
 class DBController
 {
     private $db = null;
@@ -15,9 +17,10 @@ class DBController
             try {
                 $this->db = new \PDO('mysql:host='.$dbSettings['host'].';port='.$dbSettings['port'].';dbname='.$dbSettings['database'], $dbSettings['username'], $dbSettings['password']);
             } catch (\PDOException $e) {
-                die('Connection failed: '.$e->getMessage());
+                throw new ControllerException($e->getMessage(), $e->getCode());
             }
         }
+
         return $this;
     }
 
@@ -29,6 +32,7 @@ class DBController
     public function setTableName(string $table)
     {
         self::$table = $table;
+
         return $this;
     }
 
@@ -45,8 +49,7 @@ class DBController
             }
             return false;
         } catch (\PDOException $e) {
-            self::throwDBError($e->getMessage(), $e->getCode());
-            exit();
+            throw new ControllerException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -65,8 +68,7 @@ class DBController
                 ':verhash' => $tpl_verhash
             ]);
         } catch (\PDOException $e) {
-            self::throwDBError($e->getMessage(), $e->getCode());
-            exit();
+            throw new ControllerException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -86,17 +88,7 @@ class DBController
                 ':type' => $tpl_type
             ]);
         } catch (\PDOException $e) {
-            self::throwDBError($e->getMessage(), $e->getCode());
-            exit();
+            throw new ControllerException($e->getMessage(), $e->getCode());
         }
-    }
-
-    //Throw database error excetpion
-    private static function throwDBError($errorMessage, $errorCode)
-    {
-        $error = '<h1>Service unavailable</h1>'."\n";
-        $error .= '<h2>Error Info :'.$errorMessage.'</h2>'."\n";
-        $error .= '<h3>Error Code :'.$errorCode.'</h3>'."\n";
-        throw new \Exception($error);
     }
 }

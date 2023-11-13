@@ -6,6 +6,7 @@ use carry0987\Template\Controller\DBController;
 use carry0987\Template\Controller\RedisController;
 use carry0987\Template\Tools\Minifier;
 use carry0987\Template\Tools\Utils;
+use carry0987\Template\Exception\TemplateException;
 
 class Template
 {
@@ -559,7 +560,6 @@ class Template
     //Throw error excetpion
     private static function throwError(string $message, string $tplname = null)
     {
-        throw new \Exception($tplname !== null ? $tplname.': '.$message : $message);
-        exit();
+        throw new TemplateException($message, $tplname);
     }
 }

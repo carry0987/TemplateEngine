@@ -5,6 +5,7 @@ use carry0987\Template\Controller\DBController;
 use carry0987\Template\Controller\RedisController;
 use carry0987\Template\Tools\Minifier;
 use carry0987\Template\Tools\Utils;
+use carry0987\Template\Exception\AssetException;
 
 class Asset
 {
@@ -405,7 +406,6 @@ class Asset
     //Throw error excetpion
     private static function throwError(string $message, string $file_msg = null)
     {
-        throw new \Exception($file_msg !== null ? $file_msg.': '.$message : $message);
-        exit();
+        throw new AssetException($message, $file_msg);
     }
 }
