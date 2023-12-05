@@ -4,12 +4,12 @@
     "keywords": ["template", "engine", "template-engine"],
     "type": "library",
     "require": {
-        "php": ">=7.2",
-        "carry0987/fiesta-redis-tool": ">=1.0.0"
+        "php": ">=8.0",
+        "carry0987/fiesta-redis-tool": ">=1.0.2"
     },
     "require-dev": {
-        "php": ">=7.2",
-        "carry0987/fiesta-redis-tool": ">=1.0.0"
+        "php": ">=8.0",
+        "carry0987/fiesta-redis-tool": ">=1.0.2"
     },
     "license": "MIT",
     "autoload": {
