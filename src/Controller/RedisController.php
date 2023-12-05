@@ -8,7 +8,7 @@ class RedisController
     private $redis = null;
     private $hash = 'tpl';
 
-    public function __construct(mixed $redisConfig)
+    public function __construct($redisConfig)
     {
         if ($redisConfig instanceof RedisTool) {
             $this->redis = $redisConfig;

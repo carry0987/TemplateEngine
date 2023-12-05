@@ -55,7 +55,7 @@ class Asset
         return str_replace('.css', '', $file);
     }
 
-    private function placeCSSName(string | array $place)
+    private function placeCSSName($place)
     {
         return (is_array($place)) ? substr(md5(implode('-', $place)), 0, 6) : $place;
     }
@@ -65,7 +65,7 @@ class Asset
         return Utils::trimPath($this->options['css_dir'].Template::DIR_SEP.$file);
     }
 
-    private function getCSSCache(string $file, string | array $place)
+    private function getCSSCache(string $file, $place)
     {
         $file = Utils::trimRelativePath($file);
         $place = $this->placeCSSName($place);
@@ -202,7 +202,7 @@ class Asset
     }
 
     //Parse CSS File
-    private function parseCSSFile(string $file, string | array $place)
+    private function parseCSSFile(string $file, $place)
     {
         $css_tplfile = $this->getCSSFile($file);
         if (!is_readable($css_tplfile)) {
@@ -223,7 +223,7 @@ class Asset
     }
 
     //Parse CSS Template
-    private function parseCSSTemplate(string $file, string | array $place, bool $get_md5 = false)
+    private function parseCSSTemplate(string $file, $place, bool $get_md5 = false)
     {
         $css_tplfile = $this->getCSSFile($file);
         if (!is_readable($css_tplfile)) {
@@ -272,7 +272,7 @@ class Asset
     }
 
     //Load CSS Template
-    public function loadCSSTemplate(string $file, string | array $place)
+    public function loadCSSTemplate(string $file, $place)
     {
         if (is_array($place)) {
             $place = (count($place) > 1) ? $place : $place[0];

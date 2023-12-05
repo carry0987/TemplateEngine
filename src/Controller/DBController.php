@@ -8,7 +8,7 @@ class DBController
     private $db = null;
     private static $table = 'template';
 
-    public function __construct(mixed $dbSettings)
+    public function __construct($dbSettings)
     {
         if ($dbSettings instanceof \PDO) {
             $this->db = $dbSettings;

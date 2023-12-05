@@ -61,7 +61,7 @@ class Template
     }
 
     // Set template parameter
-    private function setTemplate(string $name, mixed $value)
+    private function setTemplate(string $name, $value)
     {
         switch ($name) {
             case 'template_dir':
@@ -126,7 +126,7 @@ class Template
         }
     }
 
-    public function __set(string $name, mixed $value)
+    public function __set(string $name, $value)
     {
         $this->setTemplate($name, $value);
     }
@@ -537,7 +537,7 @@ class Template
         return $search;
     }
 
-    private function transAmp(mixed $str)
+    private function transAmp($str)
     {
         $str = str_replace('&', '&amp;', $str);
         $str = str_replace('&amp;amp;', '&amp;', $str);
@@ -545,13 +545,13 @@ class Template
         return $str;
     }
 
-    private function addQuote(mixed $var)
+    private function addQuote($var)
     {
         return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
     }
 
     //Replace variable output
-    private function stripvTags(mixed $expr, mixed $statement = null)
+    private function stripvTags($expr, $statement = null)
     {
         $expr = str_replace('\\\"', '\"', preg_replace("/\<\?\=(\\\$.+?)\?\>/s", "\\1", $expr));
         if (empty($statement)) return $expr;
@@ -565,7 +565,7 @@ class Template
         return '<style type="text/css">'.$css.'</style>';
     }
 
-    private function stripScriptAmp(mixed $s, string $extra)
+    private function stripScriptAmp($s, string $extra)
     {
         $s = str_replace('&amp;', '&', $s);
 
