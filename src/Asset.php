@@ -10,7 +10,7 @@ use carry0987\Template\Exception\AssetException;
 class Asset
 {
     private $options = array();
-    private $place = '';
+    private $place = null;
     private $connectdb = null;
     private $redis = null;
     private $template = null;
@@ -20,22 +20,30 @@ class Asset
     public function __construct(Template $template)
     {
         $this->template = $template;
+
+        return $this;
     }
 
     public function setDatabase(DBController $connectdb)
     {
         $this->connectdb = $connectdb;
+
+        return $this;
     }
 
     public function setRedis(RedisController $redis)
     {
         $this->redis = $redis;
+
+        return $this;
     }
 
     // Set options
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
     }
 
     public function loadTemplate(string $file)
@@ -70,6 +78,7 @@ class Asset
         $file = Utils::trimRelativePath($file);
         $place = $this->placeCSSName($place);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '_'.$place.'.css', $file);
+
         return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.'css'.Template::DIR_SEP.$file);
     }
 
@@ -78,6 +87,7 @@ class Asset
     {
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.cssversion.json', $file);
+
         return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.$file);
     }
 
@@ -134,6 +144,7 @@ class Asset
             }
             file_put_contents($versionFile, $versionContent);
         }
+
         return $verhash;
     }
 
@@ -173,6 +184,7 @@ class Asset
             $result['update'] = ($css_md5 !== $md5data) ? true : false;
         }
         $result['verhash'] = ($result['update'] === true) ? $this->cssSaveVersion($file, $css_md5) : $verhash;
+
         return $result;
     }
 
@@ -198,6 +210,7 @@ class Asset
         } else {
             $file = $this->getCSSFile($file);
         }
+
         return $file.'?v='.$css_version_check['verhash'];
     }
 
@@ -219,6 +232,7 @@ class Asset
         } else {
             file_put_contents($cachefile, $content."\n");
         }
+
         return $cachefile;
     }
 
@@ -255,6 +269,7 @@ class Asset
         } else {
             file_put_contents($cachefile, $content."\n");
         }
+
         return $cachefile;
     }
 
@@ -268,6 +283,7 @@ class Asset
                 $content = '/* '.$param.' */'."\n".$matches[1]."\n".'/* END '.$param.' */';
             }
         }
+
         return $content;
     }
 
@@ -301,6 +317,9 @@ class Asset
         if (!file_exists($css_cache_file) || $css_version_check['update'] === true || $css_version === false) {
             $this->parseCSSTemplate($file, $place);
         }
+        //Reset place
+        $this->place = null;
+
         return $css_cache_file.'?v='.$verhash;
     }
 
@@ -321,6 +340,7 @@ class Asset
     {
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.jsversion.txt', $file);
+
         return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.$file);
     }
 
@@ -355,6 +375,7 @@ class Asset
             }
             file_put_contents($versionfile, $versionContent);
         }
+
         return $verhash;
     }
 
@@ -384,6 +405,7 @@ class Asset
             $result['update'] = (md5_file($this->getJSFile($file)) !== $md5data) ? true : false;
         }
         $result['verhash'] = ($result['update'] === true) ? $this->jsSaveVersion($file) : $verhash;
+
         return $result;
     }
 
@@ -400,6 +422,7 @@ class Asset
         if ($js_version === false) $this->jsSaveVersion($file);
         $js_version_check = $this->jsVersionCheck($file);
         $file = $this->getJSFile($file);
+
         return $file.'?v='.$js_version_check['verhash'];
     }
 

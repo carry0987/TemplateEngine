@@ -35,6 +35,8 @@ class Template
             'auto_update' => false,
             'cache_lifetime' => 0
         );
+
+        return $this;
     }
 
     public function setDatabase(DBController $connectdb)
@@ -42,6 +44,8 @@ class Template
         if ($connectdb->isConnected() !== true) return;
         $this->connectdb = $connectdb;
         self::$asset->setDatabase($connectdb);
+
+        return $this;
     }
 
     public function setRedis(RedisController $redis)
@@ -49,6 +53,8 @@ class Template
         if ($redis->isConnected() !== true) return;
         $this->redis = $redis;
         self::$asset->setRedis($redis);
+
+        return $this;
     }
 
     // Set template parameter array
@@ -58,6 +64,8 @@ class Template
             $this->setTemplate($name, $value);
         }
         self::$asset->setOptions($this->options);
+
+        return $this;
     }
 
     // Set template parameter
@@ -124,23 +132,31 @@ class Template
                 self::throwError('Unknown template setting options', $name);
                 break;
         }
+
+        return $this;
     }
 
     public function __set(string $name, mixed $value)
     {
         $this->setTemplate($name, $value);
+
+        return $this;
     }
 
     public function compressHTML(bool $html)
     {
         $this->compress['html'] = $html;
         self::$asset->compress['html'] = $html;
+
+        return $this;
     }
 
     public function compressCSS(bool $css)
     {
         $this->compress['css'] = $css;
         self::$asset->compress['css'] = $css;
+
+        return $this;
     }
 
     public static function getAsset()
