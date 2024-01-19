@@ -5,11 +5,7 @@
     "type": "library",
     "require": {
         "php": ">=8.0",
-        "carry0987/fiesta-redis-tool": ">=1.0.2"
-    },
-    "require-dev": {
-        "php": ">=8.0",
-        "carry0987/fiesta-redis-tool": ">=1.0.2"
+        "carry0987/redis-tool": "^1.0"
     },
     "license": "MIT",
     "autoload": {

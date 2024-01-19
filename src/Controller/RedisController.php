@@ -1,7 +1,7 @@
 <?php
 namespace carry0987\Template\Controller;
 
-use carry0987\Fiesta\RedisTool;
+use carry0987\Redis\RedisTool;
 
 class RedisController
 {
