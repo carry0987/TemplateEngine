@@ -62,7 +62,7 @@ class RedisController
         return $this->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
     }
 
-    public function getTemplateByMd5(string $tpl_hash)
+    public function getTemplateByHash(string $tpl_hash)
     {
         $tpl_id = $this->redis->getValue('tpl_hash:'.$tpl_hash);
         if ($tpl_id) {
