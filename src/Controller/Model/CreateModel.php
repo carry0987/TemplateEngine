@@ -14,9 +14,7 @@ class CreateModel extends DataCreateModel
                     VALUES (?, ?, ?, ?, ?, ?)',
             'bind'  => 'ssssis'
         ];
-        $dataArray = [
-            'param' => [$tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash]
-        ];
+        $dataArray = [$tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash];
 
         return $this->createSingleData($queryArray, $dataArray);
     }

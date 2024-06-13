@@ -15,9 +15,7 @@ class UpdateModel extends DataUpdateModel
                 WHERE tpl_path = ? AND tpl_name = ? AND tpl_type = ?',
             'bind'  => 'sissss'
         ];
-        $dataArray = [
-            'param' => [$tpl_hash, $tpl_expire_time, $tpl_verhash, $tpl_path, $tpl_name, $tpl_type]
-        ];
+        $dataArray = [$tpl_hash, $tpl_expire_time, $tpl_verhash, $tpl_path, $tpl_name, $tpl_type];
 
         return $this->updateSingleData($queryArray, $dataArray);
     }

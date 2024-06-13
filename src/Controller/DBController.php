@@ -44,9 +44,11 @@ class DBController
         $this->update::$table = $table;
     }
 
-    public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type): array
+    public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type): array|false
     {
-        return $this->read->getVersion($tpl_path, $tpl_name, $tpl_type);
+        $version = $this->read->getVersion($tpl_path, $tpl_name, $tpl_type);
+
+        return empty($version) ? false : $version;
     }
 
     public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash): bool
