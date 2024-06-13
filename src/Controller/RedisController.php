@@ -14,7 +14,7 @@ class RedisController
             $this->redis = $redisConfig;
         }
         if ($this->redis === null && is_array($redisConfig)) {
-            $this->redis = new RedisTool($redisConfig['host']);
+            $this->redis = new RedisTool($redisConfig);
         }
 
         return $this;

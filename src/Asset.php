@@ -65,7 +65,7 @@ class Asset
 
     private function placeCSSName(array|string $place)
     {
-        return (is_array($place)) ? substr(md5(implode('-', $place)), 0, 6) : $place;
+        return (is_array($place)) ? substr(Utils::xxHash(implode('-', $place)), 0, 6) : $place;
     }
 
     private function getCSSFile(string $file)
@@ -101,7 +101,7 @@ class Asset
             self::throwError('CSS file not found or couldn\'t be opened', $css_file);
         }
         //Add md5 check
-        $md5data = ($css_md5 === null) ? md5_file($css_file) : $css_md5;
+        $md5data = ($css_md5 === null) ? Utils::xxHashFile($css_file) : $css_md5;
         //Random length random()
         $verhash = Utils::generateRandom(7);
         //Insert md5 & verhash
@@ -138,7 +138,7 @@ class Asset
             }
             $versionContent = json_encode($versionContent);
             //Write version file
-            $makepath = Utils::makePath($versionFile);
+            $makepath = Utils::makeFilePath($versionFile);
             if ($makepath !== true) {
                 self::throwError('Couldn\'t build CSS version folder', $makepath);
             }
@@ -176,7 +176,7 @@ class Asset
             $expire_time = $versionContent['expire_time'];
         }
         //Check CSS md5
-        $css_md5 = ($css_md5 === null) ? md5_file($this->getCSSFile($file)) : $css_md5;
+        $css_md5 = ($css_md5 === null) ? Utils::xxHashFile($this->getCSSFile($file)) : $css_md5;
         if ($this->options['auto_update'] === true && $css_md5 !== $md5data) {
             $result['update'] = true;
         }
@@ -226,7 +226,7 @@ class Asset
         $content = Minifier::minifyCSS($content);
         //Write into cache file
         $cachefile = $this->getCSSCache($file, $place);
-        $makepath = Utils::makePath($cachefile);
+        $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
             self::throwError('Can\'t create template folder', $makepath);
         } else {
@@ -254,16 +254,16 @@ class Asset
                     $place_array[$value] = $this->parse_csstpl($contents, $matches, $value);
                 }
             }
-            if ($get_md5 !== false) return md5(implode("\n", $place_array));
+            if ($get_md5 !== false) return Utils::xxHash(implode("\n", $place_array));
             $content = implode("\n", $place_array);
         } else {
             $content = preg_match("/\/\*\[$place\]\*\/\s(.*?)\/\*\[\/$place\]\*\//is", $content, $matches);
-            if ($get_md5 !== false) return md5($matches[1]);
+            if ($get_md5 !== false) return Utils::xxHash($matches[1]);
             $content = $this->parse_csstpl($content, $matches, $place);
         }
         //Write into cache file
         $cachefile = $this->getCSSCache($file, $place);
-        $makepath = Utils::makePath($cachefile);
+        $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
             self::throwError('Can\'t build template folder', $makepath);
         } else {
@@ -351,7 +351,7 @@ class Asset
             self::throwError('JS file not found or couldn\'t be opened', $js_file);
         }
         //Add md5 check
-        $md5data = md5_file($js_file);
+        $md5data = Utils::xxHashFile($js_file);
         //Random length random()
         $verhash = Utils::generateRandom(7);
         //Insert md5 & verhash
@@ -366,7 +366,7 @@ class Asset
             $versionContent = $md5data."\r\n".$verhash."\r\n".$expire_time;
             //Write version file
             $versionfile = $this->getJSVersionFile($file);
-            $makepath = Utils::makePath($versionfile);
+            $makepath = Utils::makeFilePath($versionfile);
             if ($makepath !== true) {
                 self::throwError('Couldn\'t build JS version folder', $makepath);
             }
@@ -395,11 +395,11 @@ class Asset
             $verhash = $versionContent[1];
             $expire_time = $versionContent[2];
         }
-        if ($this->options['auto_update'] === true && md5_file($this->getJSFile($file)) !== $md5data) {
+        if ($this->options['auto_update'] === true && Utils::xxHashFile($this->getJSFile($file)) !== $md5data) {
             $result['update'] = true;
         }
         if ($this->options['cache_lifetime'] != 0 && (time() - $expire_time >= $this->options['cache_lifetime'] * 60)) {
-            $result['update'] = (md5_file($this->getJSFile($file)) !== $md5data) ? true : false;
+            $result['update'] = (Utils::xxHashFile($this->getJSFile($file)) !== $md5data) ? true : false;
         }
         $result['verhash'] = ($result['update'] === true) ? $this->jsSaveVersion($file) : $verhash;
 

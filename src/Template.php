@@ -212,11 +212,11 @@ class Template
             $expire_time = (int) $versionContent[1];
         }
         if ($check_tpl === false) {
-            if ($this->options['auto_update'] === true && md5_file($this->getTplFile($file)) !== $md5data) {
+            if ($this->options['auto_update'] === true && Utils::xxHashFile($this->getTplFile($file)) !== $md5data) {
                 $this->parseTemplate($file);
             }
             if ($this->options['cache_lifetime'] != 0 && (time() - $expire_time >= $this->options['cache_lifetime'] * 60)) {
-                if (md5_file($this->getTplFile($file)) !== $md5data) $this->parseTemplate($file);
+                if (Utils::xxHashFile($this->getTplFile($file)) !== $md5data) $this->parseTemplate($file);
             }
         }
     }
@@ -324,7 +324,7 @@ class Template
 
         //Write into cache file
         $cachefile = $this->getTplCache($file);
-        $makepath = Utils::makePath($cachefile);
+        $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
             self::throwError('Can\'t build template folder', $makepath);
         } else {
@@ -333,7 +333,7 @@ class Template
 
         if ($this->connectdb !== null || $this->redis !== null) {
             //Insert md5 and expiretime into cache database
-            $md5data = md5_file($tplfile);
+            $md5data = Utils::xxHashFile($tplfile);
             $versionContent['tpl_hash'] = $md5data;
             $versionContent['tpl_expire_time'] = time();
             if ($this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html') !== false) {
@@ -343,7 +343,7 @@ class Template
             }
         } else {
             //Add md5 and expiretime check
-            $md5data = md5_file($tplfile);
+            $md5data = Utils::xxHashFile($tplfile);
             $expire_time = time();
             $versionContent = "$md5data\r\n$expire_time";
             $versionfile = $this->getTplVersionFile($file);
