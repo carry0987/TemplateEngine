@@ -14,9 +14,7 @@ class ReadModel extends DataReadModel
                     WHERE tpl_path = ? AND tpl_name = ? AND tpl_type = ?',
             'bind'  => 'sss'
         ];
-        $dataArray = [
-            'param' => [$tpl_path, $tpl_name, $tpl_type]
-        ];
+        $dataArray = [$tpl_path, $tpl_name, $tpl_type];
 
         return $this->getSingleData($queryArray, $dataArray);
     }
