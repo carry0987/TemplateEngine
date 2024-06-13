@@ -159,7 +159,7 @@ class Asset
                 $css_file .= '::'.$this->placeCSSName($this->place);
             }
             $static_data = $this->template->getVersion(Utils::dashPath($this->options['css_dir']), $css_file, 'css');
-            $md5data = $static_data['tpl_md5'];
+            $md5data = $static_data['tpl_hash'];
             $verhash = $static_data['tpl_verhash'];
             $expire_time = $static_data['tpl_expire_time'];
         } else {
@@ -384,7 +384,7 @@ class Asset
         if ($this->connectdb !== null || $this->redis !== null) {
             $js_file = $this->trimJSName($file);
             $static_data = $this->template->getVersion(Utils::dashPath($this->options['js_dir']), $js_file, 'js');
-            $md5data = $static_data['tpl_md5'];
+            $md5data = $static_data['tpl_hash'];
             $verhash = $static_data['tpl_verhash'];
             $expire_time = $static_data['tpl_expire_time'];
         } else {

@@ -38,7 +38,7 @@ class DBController
 
     public function getVersion(string $tpl_path, string $tpl_name, string $tpl_type)
     {
-        $tpl_query = 'SELECT tpl_md5, tpl_expire_time, tpl_verhash FROM '.self::$table.'
+        $tpl_query = 'SELECT tpl_hash, tpl_expire_time, tpl_verhash FROM '.self::$table.'
             WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
@@ -53,9 +53,9 @@ class DBController
         }
     }
 
-    public function createVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_md5, int $tpl_expire_time, string $tpl_verhash)
+    public function createVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
     {
-        $tpl_query = 'INSERT INTO '.self::$table.' (tpl_path, tpl_name, tpl_type, tpl_md5, tpl_expire_time, tpl_verhash)
+        $tpl_query = 'INSERT INTO '.self::$table.' (tpl_path, tpl_name, tpl_type, tpl_hash, tpl_expire_time, tpl_verhash)
             VALUES (:path, :name, :type, :md5, :expire_time, :verhash)';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
@@ -63,7 +63,7 @@ class DBController
                 ':path' => $tpl_path,
                 ':name' => $tpl_name,
                 ':type' => $tpl_type,
-                ':md5' => $tpl_md5,
+                ':md5' => $tpl_hash,
                 ':expire_time' => $tpl_expire_time,
                 ':verhash' => $tpl_verhash
             ]);
@@ -72,15 +72,15 @@ class DBController
         }
     }
 
-    public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_md5, int $tpl_expire_time, string $tpl_verhash)
+    public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
     {
         $tpl_query = 'UPDATE '.self::$table.'
-            SET tpl_md5 = :md5, tpl_expire_time = :expire_time, tpl_verhash = :verhash
+            SET tpl_hash = :md5, tpl_expire_time = :expire_time, tpl_verhash = :verhash
             WHERE tpl_path = :path AND tpl_name = :name AND tpl_type = :type';
         try {
             $tpl_stmt = $this->db->prepare($tpl_query);
             $tpl_stmt->execute([
-                ':md5' => $tpl_md5,
+                ':md5' => $tpl_hash,
                 ':expire_time' => $tpl_expire_time,
                 ':verhash' => $tpl_verhash,
                 ':path' => $tpl_path,
