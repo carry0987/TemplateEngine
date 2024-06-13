@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71c1b13b790c1f16f1aa3792c119a53e",
+    "content-hash": "38628ac9107cde2040731f9f1e9453df",
     "packages": [
         {
             "name": "carry0987/redis-tool",
@@ -47,6 +47,48 @@
                 "source": "https://github.com/carry0987/PHP-Redis-Tool/tree/1.1.1"
             },
             "time": "2024-01-27T18:35:28+00:00"
+        },
+        {
+            "name": "carry0987/sanite",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/carry0987/Sanite.git",
+                "reference": "f1b50efa16e3349e3f4dc406f612eb4f43039e84"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/carry0987/Sanite/zipball/f1b50efa16e3349e3f4dc406f612eb4f43039e84",
+                "reference": "f1b50efa16e3349e3f4dc406f612eb4f43039e84",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "carry0987\\Sanite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "carry0987"
+                }
+            ],
+            "description": "A PHP library that provide base CRUD structure and methods, using PDO.",
+            "support": {
+                "issues": "https://github.com/carry0987/Sanite/issues",
+                "source": "https://github.com/carry0987/Sanite/tree/1.2.2"
+            },
+            "time": "2024-06-13T11:19:32+00:00"
         },
         {
             "name": "carry0987/utils",

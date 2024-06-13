@@ -10,8 +10,8 @@ use carry0987\Template\Exception\TemplateException;
 
 class Template
 {
-    private $connectdb = null;
-    private $redis = null;
+    private ?DBController $connectdb = null;
+    private ?RedisController $redis = null;
     private $replacecode = array('search' => array(), 'replace' => array());
     private $options = array();
     private $compress = array('html' => false, 'css' => true);

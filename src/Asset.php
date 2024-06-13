@@ -11,9 +11,9 @@ class Asset
 {
     private $options = array();
     private $place = null;
-    private $connectdb = null;
-    private $redis = null;
-    private $template = null;
+    private ?DBController $connectdb = null;
+    private ?RedisController $redis = null;
+    private ?Template $template = null;
     public $compress = array('html' => false, 'css' => true);
 
     //Constructor

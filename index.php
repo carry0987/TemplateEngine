@@ -35,7 +35,7 @@ $redis = new RedisController($redisCofig);
 $template = new Template;
 $template->setOptions($options);
 $template->setDatabase($database);
-$template->setRedis($redis);
+// $template->setRedis($redis);
 
 $meme = 'Sad-Meme';
 $array = array('testa' => 'a', 'testb' => 'b');
