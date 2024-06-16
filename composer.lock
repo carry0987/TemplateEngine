@@ -50,16 +50,16 @@
         },
         {
             "name": "carry0987/sanite",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carry0987/Sanite.git",
-                "reference": "f28baaf42bf55826916639988e907952822d1380"
+                "reference": "752cf278c2fd079902635941c6e3d5df294bf4e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carry0987/Sanite/zipball/f28baaf42bf55826916639988e907952822d1380",
-                "reference": "f28baaf42bf55826916639988e907952822d1380",
+                "url": "https://api.github.com/repos/carry0987/Sanite/zipball/752cf278c2fd079902635941c6e3d5df294bf4e6",
+                "reference": "752cf278c2fd079902635941c6e3d5df294bf4e6",
                 "shasum": ""
             },
             "require": {
@@ -86,9 +86,9 @@
             "description": "A PHP library that provide base CRUD structure and methods, using PDO.",
             "support": {
                 "issues": "https://github.com/carry0987/Sanite/issues",
-                "source": "https://github.com/carry0987/Sanite/tree/1.3.3"
+                "source": "https://github.com/carry0987/Sanite/tree/1.3.4"
             },
-            "time": "2024-06-13T13:27:04+00:00"
+            "time": "2024-06-13T13:55:28+00:00"
         },
         {
             "name": "carry0987/utils",
