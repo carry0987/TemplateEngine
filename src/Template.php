@@ -21,7 +21,7 @@ class Template
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
     // Construct options
-    public function __construct(array $options = null)
+    public function __construct(array $options = [])
     {
         if (self::$asset === null) {
             self::$asset = new Asset($this);
@@ -35,7 +35,7 @@ class Template
             'auto_update' => false,
             'cache_lifetime' => 0
         );
-        if ($options !== null) {
+        if (!empty($options)) {
             $this->setOptions($options);
         }
 
