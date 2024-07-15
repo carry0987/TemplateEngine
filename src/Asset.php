@@ -423,6 +423,14 @@ class Asset
         return $file.'?v='.$js_version_check['verhash'];
     }
 
+    //Load static files
+    public function loadStaticFile(string $file)
+    {
+        $file = Utils::trimPath($this->options['static_dir'].Template::DIR_SEP.$file);
+
+        return $file;
+    }
+
     //Throw error excetpion
     private static function throwError(string $message, string $file_msg = null)
     {

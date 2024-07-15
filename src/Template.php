@@ -472,7 +472,7 @@ class Template
     {
         if ($this->options['static_dir'] === false) return $matches[1];
 
-        return $this->options['static_dir'].$matches[1];
+        return $this->stripvTags('<? echo TPL::getAsset()->loadStaticFile(\''.$matches[1].'\');?>');
     }
 
     private function parse_stripvtags_echo1(array $matches)
