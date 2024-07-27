@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\Template;
 
 use carry0987\Template\Controller\DBController;
@@ -140,7 +142,7 @@ class Asset
             //Write version file
             $makepath = Utils::makeFilePath($versionFile);
             if ($makepath !== true) {
-                self::throwError('Couldn\'t build CSS version folder', $makepath);
+                self::throwError('Couldn\'t build CSS version folder', $versionFile);
             }
             file_put_contents($versionFile, $versionContent);
         }
@@ -228,7 +230,7 @@ class Asset
         $cachefile = $this->getCSSCache($file, $place);
         $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
-            self::throwError('Can\'t create template folder', $makepath);
+            self::throwError('Can\'t create template folder', $cachefile);
         } else {
             file_put_contents($cachefile, $content."\n");
         }
@@ -265,7 +267,7 @@ class Asset
         $cachefile = $this->getCSSCache($file, $place);
         $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
-            self::throwError('Can\'t build template folder', $makepath);
+            self::throwError('Can\'t build template folder', $cachefile);
         } else {
             file_put_contents($cachefile, $content."\n");
         }
@@ -368,7 +370,7 @@ class Asset
             $versionfile = $this->getJSVersionFile($file);
             $makepath = Utils::makeFilePath($versionfile);
             if ($makepath !== true) {
-                self::throwError('Couldn\'t build JS version folder', $makepath);
+                self::throwError('Couldn\'t build JS version folder', $versionfile);
             }
             file_put_contents($versionfile, $versionContent);
         }

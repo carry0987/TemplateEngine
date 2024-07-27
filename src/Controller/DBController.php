@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\Template\Controller;
 
 use carry0987\Template\Exception\ControllerException;

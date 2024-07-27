@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\Template;
 
 use carry0987\Template\Asset;
@@ -114,7 +116,7 @@ class Template
                 if (!file_exists($value)) {
                     $makepath = Utils::makePath($value);
                     if ($makepath !== true) {
-                        self::throwError('Couldn\'t build template folder', $makepath);
+                        self::throwError('Couldn\'t build template folder', $value);
                     }
                 }
                 $this->options['cache_dir'] = $value;
@@ -329,7 +331,7 @@ class Template
         $cachefile = $this->getTplCache($file);
         $makepath = Utils::makeFilePath($cachefile);
         if ($makepath !== true) {
-            self::throwError('Can\'t build template folder', $makepath);
+            self::throwError('Can\'t build template folder', $cachefile);
         } else {
             file_put_contents($cachefile, $template."\n");
         }

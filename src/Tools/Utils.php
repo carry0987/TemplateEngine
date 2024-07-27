@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\Template\Tools;
 
 use carry0987\Utils\Utils as UtilsBase;
@@ -16,7 +18,7 @@ class Utils extends UtilsBase
     public static function trimRelativePath(string $path)
     {
         $hash = substr_count($path, '../');
-        $hash = ($hash !== 0) ? substr(self::xxHash($hash), 0, 6).'/' : '';
+        $hash = ($hash !== 0) ? substr(self::xxHash($path), 0, 6).'/' : '';
         $path = str_replace('../', '', $path);
 
         return $hash.$path;
