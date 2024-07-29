@@ -448,6 +448,11 @@ class Asset
     {
         $file = Utils::trimPath($this->options['static_dir'].Template::DIR_SEP.$file);
 
+        //Modify path
+        if ($this->path_holder !== null) {
+            $file = call_user_func($this->path_holder, $file, 'static');
+        }
+
         return $file;
     }
 
