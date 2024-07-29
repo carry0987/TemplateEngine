@@ -223,7 +223,7 @@ class Asset
 
         //Modify path
         if ($this->path_holder !== null) {
-            $file = call_user_func($this->path_holder, $file);
+            $file = call_user_func($this->path_holder, $file, 'css');
         }
 
         return $file.'?v='.$css_version_check['verhash'];
@@ -437,7 +437,7 @@ class Asset
 
         //Modify path
         if ($this->path_holder !== null) {
-            $file = call_user_func($this->path_holder, $file);
+            $file = call_user_func($this->path_holder, $file, 'js');
         }
 
         return $file.'?v='.$js_version_check['verhash'];
