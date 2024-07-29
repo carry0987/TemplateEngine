@@ -164,6 +164,12 @@ class Template
         return $this;
     }
 
+    /**
+     * Process a callable that modifies asset paths
+     *
+     * A callback function that accepts a string (path) and a string (type), and returns a string (transformed path)
+     * @param callable(string, string):string $path_holder
+     */
     public function assetPath(callable $path_holder)
     {
         self::$asset->setPathHolder($path_holder);
