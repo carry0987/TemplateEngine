@@ -13,6 +13,7 @@ class Asset
 {
     private $options = array();
     private $place = null;
+    private $path_holder = null;
     private ?DBController $connectdb = null;
     private ?RedisController $redis = null;
     private ?Template $template = null;
@@ -44,6 +45,13 @@ class Asset
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function setPathHolder(callable $path_holder)
+    {
+        $this->path_holder = $path_holder;
 
         return $this;
     }
@@ -211,6 +219,11 @@ class Asset
             $file = $css_cache_file;
         } else {
             $file = $this->getCSSFile($file);
+        }
+
+        //Modify path
+        if ($this->path_holder !== null) {
+            $file = call_user_func($this->path_holder, $file);
         }
 
         return $file.'?v='.$css_version_check['verhash'];
@@ -421,6 +434,11 @@ class Asset
         if ($js_version === false) $this->jsSaveVersion($file);
         $js_version_check = $this->jsVersionCheck($file);
         $file = $this->getJSFile($file);
+
+        //Modify path
+        if ($this->path_holder !== null) {
+            $file = call_user_func($this->path_holder, $file);
+        }
 
         return $file.'?v='.$js_version_check['verhash'];
     }

@@ -164,6 +164,11 @@ class Template
         return $this;
     }
 
+    public function assetPath(callable $path_holder)
+    {
+        self::$asset->setPathHolder($path_holder);
+    }
+
     public static function getAsset()
     {
         return self::$asset;
