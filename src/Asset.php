@@ -332,6 +332,11 @@ class Asset
         //Reset place
         $this->place = null;
 
+        //Modify path
+        if ($this->path_holder !== null) {
+            $css_cache_file = call_user_func($this->path_holder, $css_cache_file, 'css');
+        }
+
         return $css_cache_file.'?v='.$verhash;
     }
 
