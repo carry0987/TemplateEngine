@@ -34,6 +34,8 @@ class Template
             'js_dir' => 'js'.self::DIR_SEP,
             'static_dir' => 'static'.self::DIR_SEP,
             'cache_dir' => 'templates'.self::DIR_SEP.'cache'.self::DIR_SEP,
+            'css_cache_dir' => null,
+            'js_cache_dir' => null,
             'auto_update' => false,
             'cache_lifetime' => 0
         );
@@ -120,6 +122,26 @@ class Template
                     }
                 }
                 $this->options['cache_dir'] = $value;
+                break;
+            case 'css_cache_dir':
+                $value = Utils::trimPath($value);
+                if (!file_exists($value)) {
+                    $makepath = Utils::makePath($value);
+                    if ($makepath !== true) {
+                        self::throwError('Couldn\'t build css cache folder', $value);
+                    }
+                }
+                $this->options['css_cache_dir'] = $value;
+                break;
+            case 'js_cache_dir':
+                $value = Utils::trimPath($value);
+                if (!file_exists($value)) {
+                    $makepath = Utils::makePath($value);
+                    if ($makepath !== true) {
+                        self::throwError('Couldn\'t build js cache folder', $value);
+                    }
+                }
+                $this->options['js_cache_dir'] = $value;
                 break;
             case 'auto_update':
                 $this->options['auto_update'] = (boolean) $value;

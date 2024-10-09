@@ -14,6 +14,7 @@ class Asset
     private $options = array();
     private $place = null;
     private $path_holder = null;
+    private $cache_dir = array('css' => null, 'js' => null);
     private ?DBController $connectdb = null;
     private ?RedisController $redis = null;
     private ?Template $template = null;
@@ -45,6 +46,10 @@ class Asset
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        // Set cache directory
+        $this->cache_dir['css'] = $this->options['css_cache_dir'] ?? $this->options['cache_dir'];
+        $this->cache_dir['js'] = $this->options['js_cache_dir'] ?? $this->options['cache_dir'];
 
         return $this;
     }
@@ -89,7 +94,7 @@ class Asset
         $place = $this->placeCSSName($place);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '_'.$place.'.css', $file);
 
-        return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.'css'.Template::DIR_SEP.$file);
+        return Utils::trimPath($this->cache_dir['css'].Template::DIR_SEP.'css'.Template::DIR_SEP.$file);
     }
 
     //Get CSS version file path
@@ -98,7 +103,7 @@ class Asset
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.cssversion.json', $file);
 
-        return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.$file);
+        return Utils::trimPath($this->cache_dir['css'].Template::DIR_SEP.$file);
     }
 
     //Store CSS version value
@@ -266,7 +271,7 @@ class Asset
                 $contents = preg_match("/\/\*\[$value\]\*\/\s(.*?)\/\*\[\/$value\]\*\//is", $content, $matches);
                 $place_array[$value] = $matches[1];
                 if ($get_md5 === false) {
-                    $place_array[$value] = $this->parse_csstpl($contents, $matches, $value);
+                    $place_array[$value] = $this->composeCSSModule($contents, $matches, $value);
                 }
             }
             if ($get_md5 !== false) return Utils::xxHash(implode("\n", $place_array));
@@ -274,7 +279,7 @@ class Asset
         } else {
             $content = preg_match("/\/\*\[$place\]\*\/\s(.*?)\/\*\[\/$place\]\*\//is", $content, $matches);
             if ($get_md5 !== false) return Utils::xxHash($matches[1]);
-            $content = $this->parse_csstpl($content, $matches, $place);
+            $content = $this->composeCSSModule($content, $matches, $place);
         }
         //Write into cache file
         $cachefile = $this->getCSSCache($file, $place);
@@ -288,7 +293,7 @@ class Asset
         return $cachefile;
     }
 
-    private function parse_csstpl(int $result, array $matches, string $param)
+    private function composeCSSModule(int $result, array $matches, string $param)
     {
         $content = false;
         if ($result === 1) {
@@ -358,7 +363,7 @@ class Asset
         $file = Utils::trimRelativePath($file);
         $file = preg_replace('/\.[a-z0-9\-_]+$/i', '.jsversion.txt', $file);
 
-        return Utils::trimPath($this->options['cache_dir'].Template::DIR_SEP.$file);
+        return Utils::trimPath($this->cache_dir['js'].Template::DIR_SEP.$file);
     }
 
     //Store JS version value
