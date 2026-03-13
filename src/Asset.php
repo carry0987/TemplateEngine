@@ -107,7 +107,7 @@ class Asset
     }
 
     //Store CSS version value
-    private function cssSaveVersion(string $file, string $css_md5 = null)
+    private function cssSaveVersion(string $file, ?string $css_md5 = null)
     {
         //Get CSS file
         $css_file = $this->getCSSFile($file);
@@ -164,7 +164,7 @@ class Asset
     }
 
     //Check CSS file's change
-    private function cssVersionCheck(string $file, string $css_md5 = null)
+    private function cssVersionCheck(string $file, ?string $css_md5 = null)
     {
         $result = array();
         $result['update'] = false;
@@ -467,7 +467,7 @@ class Asset
     }
 
     //Throw error excetpion
-    private static function throwError(string $message, string $file_msg = null)
+    private static function throwError(string $message, ?string $file_msg = null)
     {
         throw new AssetException($message, $file_msg);
     }

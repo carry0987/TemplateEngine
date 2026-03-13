@@ -605,7 +605,7 @@ class Template
     }
 
     //Replace variable output
-    private function stripvTags(array|string $expr, array|string $statement = null)
+    private function stripvTags(array|string $expr, null|array|string $statement = null)
     {
         $expr = str_replace('\\\"', '\"', preg_replace("/\<\?\=(\\\$.+?)\?\>/s", "\\1", $expr));
         if (empty($statement)) return $expr;
@@ -627,7 +627,7 @@ class Template
     }
 
     //Throw error excetpion
-    private static function throwError(string $message, string $tplname = null)
+    private static function throwError(string $message, ?string $tplname = null)
     {
         throw new TemplateException($message, $tplname);
     }

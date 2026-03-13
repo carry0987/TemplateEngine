@@ -50,16 +50,16 @@
         },
         {
             "name": "carry0987/sanite",
-            "version": "1.3.7",
+            "version": "1.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carry0987/Sanite.git",
-                "reference": "ddc8724665d3cc0336da8642ddfcbb8c89d7b4da"
+                "reference": "59cf9c4d3f830cd354d1f70271c47e8ae057ed22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carry0987/Sanite/zipball/ddc8724665d3cc0336da8642ddfcbb8c89d7b4da",
-                "reference": "ddc8724665d3cc0336da8642ddfcbb8c89d7b4da",
+                "url": "https://api.github.com/repos/carry0987/Sanite/zipball/59cf9c4d3f830cd354d1f70271c47e8ae057ed22",
+                "reference": "59cf9c4d3f830cd354d1f70271c47e8ae057ed22",
                 "shasum": ""
             },
             "require": {
@@ -86,26 +86,29 @@
             "description": "A PHP library that provide base CRUD structure and methods, using PDO.",
             "support": {
                 "issues": "https://github.com/carry0987/Sanite/issues",
-                "source": "https://github.com/carry0987/Sanite/tree/1.3.7"
+                "source": "https://github.com/carry0987/Sanite/tree/1.3.10"
             },
-            "time": "2024-06-26T15:56:56+00:00"
+            "time": "2025-12-22T12:10:14+00:00"
         },
         {
             "name": "carry0987/utils",
-            "version": "1.0.9",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carry0987/PHP-Utils.git",
-                "reference": "769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4"
+                "reference": "4a04aa7c08c780631311f897281c8c17523daf86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carry0987/PHP-Utils/zipball/769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4",
-                "reference": "769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4",
+                "url": "https://api.github.com/repos/carry0987/PHP-Utils/zipball/4a04aa7c08c780631311f897281c8c17523daf86",
+                "reference": "4a04aa7c08c780631311f897281c8c17523daf86",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^12.4"
             },
             "type": "library",
             "autoload": {
@@ -125,9 +128,9 @@
             "description": "This Utils library provides a collection of static methods designed to help in various common tasks encountered in PHP development. From manipulating arrays and strings to handling date-time conversions and file paths, this library aims to be a handy tool for PHP developers.",
             "support": {
                 "issues": "https://github.com/carry0987/PHP-Utils/issues",
-                "source": "https://github.com/carry0987/PHP-Utils/tree/1.0.9"
+                "source": "https://github.com/carry0987/PHP-Utils/tree/1.1.0"
             },
-            "time": "2024-07-21T14:52:46+00:00"
+            "time": "2025-10-17T05:28:34+00:00"
         }
     ],
     "packages-dev": [],
