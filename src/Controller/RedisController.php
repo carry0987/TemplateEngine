@@ -46,7 +46,7 @@ class RedisController
         return false;
     }
 
-    public function createVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
+    public function saveVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
     {
         if ($this->redis === null) return false;
         $tpl_key = "template::$tpl_path::$tpl_name::$tpl_type";
@@ -57,11 +57,6 @@ class RedisController
         ];
 
         return $this->redis->setHashValue($this->hash, $tpl_key, serialize($tpl_data));
-    }
-
-    public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
-    {
-        return $this->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
     }
 
     public function getTemplateByHash(string $tpl_hash)

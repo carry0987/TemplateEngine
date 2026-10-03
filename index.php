@@ -18,20 +18,21 @@ $options = array(
 
 //Database setting
 $config = array(
-    'host' => 'mariadb',
-    'port' => 3306,
-    'database' => 'dev_tpl',
-    'username' => 'test_user',
-    'password' => 'test1234',
+    'driver' => 'pgsql',
+    'host' => 'postgres',
+    'port' => 5432,
+    'database' => 'mydb',
+    'username' => 'myuser',
+    'password' => 'mypassword',
 );
-$redisCofig = array(
+$redisConfig = array(
     'host' => 'redis',
     'port' => 6379,
     'password' => 'test1234',
     'database' => 5,
 );
 $database = new DBController($config);
-$redis = new RedisController($redisCofig);
+$redis = new RedisController($redisConfig);
 $template = new Template;
 $template->setOptions($options);
 $template->setDatabase($database);

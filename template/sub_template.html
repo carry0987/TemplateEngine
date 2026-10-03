@@ -1,2 +1,3 @@
 <h3>Image</h3>
-<img src="{static img/{$meme}.jpg}" alt="test" />
+<img src="{static img/true-story.jpg}" alt="test" />
+<img src="{echo TPL::getAsset()->loadStaticFile('img/'.$meme.'.jpg')}" alt="test" />

@@ -1,8 +1,8 @@
 # TemplateEngine
 [![Packagist](https://img.shields.io/packagist/v/carry0987/template-engine.svg?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)  
-A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis and MySQL.
+A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis, PostgreSQL, and MySQL.
 
-This powerful yet simple template engine provides the flexibility to store and cache your templates in various ways. Whether you're looking to save your templates locally, cache them with longevity in mind, nest template files for complex designs, utilize persistent storage with Redis, or manage templates through MySQL databases, this engine is equipped to handle your needs efficiently and with ease.
+This powerful yet simple template engine provides the flexibility to store and cache your templates in various ways. Whether you're looking to save your templates locally, cache them with longevity in mind, nest template files for complex designs, utilize persistent storage with Redis, or manage templates through PostgreSQL or MySQL databases, this engine is equipped to handle your needs efficiently and with ease.
 
 ## Installation
 ```bash
@@ -17,17 +17,40 @@ composer require carry0987/template-engine
 - Cache lifetime
 
 ## Usage
-You can choose saving version of template file to Database or Redis  
+You can choose saving version of template file to Database or Redis.
 
-Save to the database
+For database-backed cache metadata, run one matching schema before using the engine:
+
+- PostgreSQL: `database/postgresql.sql`
+- MySQL: `database/mysql.sql`
+
+PostgreSQL is the default recommendation. Enable `pdo_pgsql` for PostgreSQL or `pdo_mysql` for MySQL. MySQL support requires version 8.0.19 or later.
+
+Save to PostgreSQL
 ```php
 // Database configuration
 $config = array(
+    'driver' => 'pgsql',
+    'host' => 'localhost',
+    'port' => 5432,
+    'database' => 'template',
+    'username' => 'root',
+    'password' => ''
+);
+$database = new DBController($config);
+```
+
+Save to MySQL
+```php
+// Database configuration
+$config = array(
+    'driver' => 'mysql',
     'host' => 'localhost',
     'port' => 3306,
     'database' => 'template',
     'username' => 'root',
-    'password' => ''
+    'password' => '',
+    'charset' => 'utf8mb4'
 );
 $database = new DBController($config);
 ```

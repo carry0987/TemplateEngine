@@ -375,11 +375,7 @@ class Template
             $md5data = Utils::xxHashFile($tplfile);
             $versionContent['tpl_hash'] = $md5data;
             $versionContent['tpl_expire_time'] = time();
-            if ($this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html') !== false) {
-                $this->updateVersion(Utils::dashPath($this->options['template_dir']), $file, 'html', $versionContent['tpl_hash'], $versionContent['tpl_expire_time'], '0');
-            } else {
-                $this->createVersion(Utils::dashPath($this->options['template_dir']), $file, 'html', $versionContent['tpl_hash'], $versionContent['tpl_expire_time'], '0');
-            }
+            $this->saveVersion(Utils::dashPath($this->options['template_dir']), $file, 'html', $versionContent['tpl_hash'], $versionContent['tpl_expire_time'], '0');
         } else {
             //Add md5 and expiretime check
             $md5data = Utils::xxHashFile($tplfile);
@@ -427,26 +423,17 @@ class Template
         return false;
     }
 
-    public function createVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
+    public function saveVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash): bool
     {
         if ($this->redis !== null) {
-            $redis = $this->redis->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
-            if ($redis !== false) return $redis;
+            $result = $this->redis->saveVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
+            if ($result !== false) return (bool) $result;
         }
         if ($this->connectdb !== null) {
-            $this->connectdb->createVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
+            return $this->connectdb->upsertVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
         }
-    }
 
-    public function updateVersion(string $tpl_path, string $tpl_name, string $tpl_type, string $tpl_hash, int $tpl_expire_time, string $tpl_verhash)
-    {
-        if ($this->redis !== null) {
-            $redis = $this->redis->updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
-            if ($redis !== false) return $redis;
-        }
-        if ($this->connectdb !== null) {
-            $this->connectdb->updateVersion($tpl_path, $tpl_name, $tpl_type, $tpl_hash, $tpl_expire_time, $tpl_verhash);
-        }
+        return false;
     }
 
     private function parse_language_var_1(array $matches)

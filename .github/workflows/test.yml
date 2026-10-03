@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        driver: [pgsql, mysql]
+    services:
+      postgres:
+        image: postgres:18.1
+        env:
+          POSTGRES_DB: template_engine
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres -d template_engine"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: template_engine
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+    env:
+      DB_DRIVER: ${{ matrix.driver }}
+      DB_HOST: 127.0.0.1
+      DB_PORT: ${{ matrix.driver == 'pgsql' && '5432' || '3306' }}
+      DB_NAME: template_engine
+      DB_USERNAME: ${{ matrix.driver == 'pgsql' && 'postgres' || 'root' }}
+      DB_PASSWORD: ${{ matrix.driver == 'pgsql' && 'postgres' || '' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, pdo_pgsql
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer test

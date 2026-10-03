@@ -126,11 +126,7 @@ class Asset
             if (!empty($this->place)) {
                 $trimed_name .= '::'.$this->placeCSSName($this->place);
             }
-            if ($this->template->getVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css') !== false) {
-                $this->template->updateVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
-            } else {
-                $this->template->createVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
-            }
+            $this->template->saveVersion(Utils::dashPath($this->options['css_dir']), $trimed_name, 'css', $md5data, $expire_time, $verhash);
         } else {
             $versionFile = $this->getCSSVersionFile($file);
             if (file_exists($versionFile)) {
@@ -382,11 +378,7 @@ class Asset
         //Insert md5 & verhash
         $expire_time = time();
         if ($this->connectdb !== null || $this->redis !== null) {
-            if ($this->template->getVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js') !== false) {
-                $this->template->updateVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
-            } else {
-                $this->template->createVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
-            }
+            $this->template->saveVersion(Utils::dashPath($this->options['js_dir']), $this->trimJSName($file), 'js', $md5data, $expire_time, $verhash);
         } else {
             $versionContent = $md5data."\r\n".$verhash."\r\n".$expire_time;
             //Write version file
