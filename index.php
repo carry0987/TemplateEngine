@@ -21,14 +21,14 @@ $config = array(
     'driver' => 'pgsql',
     'host' => 'postgres',
     'port' => 5432,
-    'database' => 'mydb',
-    'username' => 'myuser',
-    'password' => 'mypassword',
+    'database' => 'template_engine',
+    'username' => 'template_engine',
+    'password' => 'change-me-postgres-password',
 );
 $redisConfig = array(
     'host' => 'redis',
     'port' => 6379,
-    'password' => 'test1234',
+    'password' => 'change-me-redis-password',
     'database' => 5,
 );
 $database = new DBController($config);

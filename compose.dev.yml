@@ -1,0 +1,116 @@
+name: template-engine
+
+# Services
+services:
+  # PHP Development Server
+  php:
+    image: carry0987/php:8.4-fpm
+    working_dir: /var/www/php
+    command: php -S 0.0.0.0:8080 -t /var/www/php
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/var/www/php:ro
+      - cache_data:/var/www/php/cache
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        required: false
+      postgres:
+        condition: service_healthy
+        required: false
+
+  # Redis Service
+  redis:
+    image: redis:8.4-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: sh -c 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    volumes:
+      - redis_data:/data
+
+  # MySQL Service
+  mariadb:
+    image: mariadb:13.0
+    profiles:
+      - mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: mariadb-admin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      interval: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:18.1-alpine
+    profiles:
+      - postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-myuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mypassword}
+      POSTGRES_DB: ${POSTGRES_DB:-mydb}
+      TZ: UTC
+      POSTGRES_INITDB_ARGS: >-
+        --locale-provider=builtin
+        --builtin-locale=C.UTF-8
+        --encoding=UTF8
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-myuser} -d ${POSTGRES_DB:-mydb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dbgate:
+    image: dbgate/dbgate:7.3.1-alpine
+    profiles:
+      - mariadb
+      - postgres
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        required: false
+      postgres:
+        condition: service_healthy
+        required: false
+    environment:
+      CONNECTIONS: mariadb,postgres
+      # MariaDB connection settings
+      LABEL_mariadb: MariaDB
+      SERVER_mariadb: mariadb
+      USER_mariadb: ${MYSQL_USER}
+      PASSWORD_mariadb: ${MYSQL_PASSWORD}
+      DATABASE_mariadb: ${MYSQL_DATABASE}
+      PORT_mariadb: 3306
+      ENGINE_mariadb: mysql@dbgate-plugin-mysql
+      # PostgreSQL connection settings
+      LABEL_postgres: PostgreSQL
+      SERVER_postgres: postgres
+      USER_postgres: ${POSTGRES_USER:-myuser}
+      PASSWORD_postgres: ${POSTGRES_PASSWORD:-mypassword}
+      DATABASE_postgres: ${POSTGRES_DB:-mydb}
+      PORT_postgres: 5432
+      ENGINE_postgres: postgres@dbgate-plugin-postgres
+      SCHEMA_postgres: public
+      TZ: Asia/Taipei
+    volumes:
+      - dbgate_data:/root/.dbgate
+    ports:
+      - 18080:3000
+
+# Volumes
+volumes:
+  mysql_data:
+  redis_data:
+  postgres_data:
+  dbgate_data:
+  cache_data:
