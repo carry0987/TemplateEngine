@@ -1,6 +1,7 @@
 # TemplateEngine
 
 [![Packagist Version](https://img.shields.io/packagist/v/carry0987/template-engine?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)
+![CI](https://github.com/carry0987/TemplateEngine/actions/workflows/test.yml/badge.svg)  
 
 TemplateEngine is a lightweight PHP template engine that compiles trusted HTML templates into cached PHP files. It also generates versioned CSS, JavaScript, and static-asset paths, with optional shared cache metadata through Redis, PostgreSQL, or MySQL.
 
