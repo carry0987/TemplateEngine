@@ -35,7 +35,7 @@ const config: Config = {
             tagName: 'meta',
             attributes: {
                 name: 'algolia-site-verification',
-                content: '657B95F77F96C774',
+                content: 'FF632C4F50D1F3EB',
             },
         },
     ],
@@ -149,6 +149,16 @@ const config: Config = {
              */
             playgroundPosition: 'bottom',
         },
+        algolia: {
+            appId: '7NY89HNJIP',
+            apiKey: 'b5e165f21bea4bfe0be9876659b4f2e9',
+            indexName: 'TemplateEngine Index',
+            contextualSearch: true,
+            externalUrlRegex: 'external\\.com|domain\\.com',
+            searchParameters: {},
+            searchPagePath: 'search',
+            insights: false,
+        }
     } satisfies Preset.ThemeConfig,
     themes: ['@docusaurus/theme-live-codeblock'],
 };
