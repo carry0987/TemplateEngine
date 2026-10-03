@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/carry0987/TemplateEngine/compare/1.4.0...1.4.1) (2026-10-03)
+
+
+### Miscellaneous Chores
+
+* **dev:** add containerized development environment ([0321c7d](https://github.com/carry0987/TemplateEngine/commit/0321c7dd390fdd0ef6b2a913ff531d084ca63549))
+
 ## [1.4.0](https://github.com/carry0987/TemplateEngine/compare/1.3.14...1.4.0) (2026-10-03)
 
 
