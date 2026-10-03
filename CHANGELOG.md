@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/carry0987/TemplateEngine/compare/1.4.1...1.4.2) (2026-10-03)
+
+
+### Miscellaneous Chores
+
+* **redis:** add DbGate connection ([eae22cd](https://github.com/carry0987/TemplateEngine/commit/eae22cdd98b19a29d3b1f9d7fd7158ae5fce8116))
+
 ## [1.4.1](https://github.com/carry0987/TemplateEngine/compare/1.4.0...1.4.1) (2026-10-03)
 
 
