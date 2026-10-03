@@ -17,7 +17,7 @@ Replace the example passwords before sharing the environment outside your local 
 ## Start PostgreSQL
 
 ```bash
-docker compose -f compose.dev.yml --profile postgres up
+docker compose -f compose.dev.yml --profile postgres up -d
 ```
 
 Open the example application at `http://localhost:8080`. DbGate is available at `http://localhost:18080`.
@@ -25,7 +25,7 @@ Open the example application at `http://localhost:8080`. DbGate is available at 
 ## Start MariaDB
 
 ```bash
-docker compose -f compose.dev.yml --profile mariadb up
+docker compose -f compose.dev.yml --profile mariadb up -d
 ```
 
 The Compose environment always starts the PHP development server and Redis. The selected profile adds the corresponding relational database and DbGate.
@@ -33,7 +33,7 @@ The Compose environment always starts the PHP development server and Redis. The 
 ## Start both databases
 
 ```bash
-docker compose -f compose.dev.yml --profile postgres --profile mariadb up
+docker compose -f compose.dev.yml --profile postgres --profile mariadb up -d
 ```
 
 ## Stop and remove data

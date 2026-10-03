@@ -158,7 +158,7 @@ const config: Config = {
             searchParameters: {},
             searchPagePath: 'search',
             insights: false,
-        }
+        },
     } satisfies Preset.ThemeConfig,
     themes: ['@docusaurus/theme-live-codeblock'],
 };

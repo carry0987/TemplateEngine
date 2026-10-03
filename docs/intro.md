@@ -43,4 +43,3 @@ Template files are trusted source code. Tags such as `{echo ...}`, `{eval ...}`,
 - [Assets and Caching](./assets-and-caching.md) covers CSS, JavaScript, and static assets.
 - [Cache Backends](./cache-backends.md) configures file, Redis, PostgreSQL, and MySQL metadata storage.
 - [Local Development](./local-development.md) explains the optional Docker Compose environment.
-
