@@ -1,296 +1,67 @@
 # TemplateEngine
-[![Packagist](https://img.shields.io/packagist/v/carry0987/template-engine.svg?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)  
-A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis, PostgreSQL, and MySQL.
 
-This powerful yet simple template engine provides the flexibility to store and cache your templates in various ways. Whether you're looking to save your templates locally, cache them with longevity in mind, nest template files for complex designs, utilize persistent storage with Redis, or manage templates through PostgreSQL or MySQL databases, this engine is equipped to handle your needs efficiently and with ease.
+[![Packagist Version](https://img.shields.io/packagist/v/carry0987/template-engine?style=flat-square)](https://packagist.org/packages/carry0987/template-engine)
 
-## Installation
+TemplateEngine is a lightweight PHP template engine that compiles trusted HTML templates into cached PHP files. It also generates versioned CSS, JavaScript, and static-asset paths, with optional shared cache metadata through Redis, PostgreSQL, or MySQL.
+
+## Requirements
+
+- PHP 8.1 or later
+- Composer
+- Write access to the configured cache directory
+
+Redis, PostgreSQL, and MySQL are optional. They require the corresponding PHP extensions: `redis`, `pdo_pgsql`, or `pdo_mysql`.
+
+## Install
+
 ```bash
 composer require carry0987/template-engine
 ```
 
-## Features
-- Support pure html as template
-- Support CSS, JS file cache
-- Support CSS model cache
-- Auto minify CSS cache
-- Cache lifetime
+## Quick start
 
-## Usage
-You can choose saving version of template file to Database or Redis.
-
-For database-backed cache metadata, run one matching schema before using the engine:
-
-- PostgreSQL: `database/postgresql.sql`
-- MySQL: `database/mysql.sql`
-
-PostgreSQL is the default recommendation. Enable `pdo_pgsql` for PostgreSQL or `pdo_mysql` for MySQL. MySQL support requires version 8.0.19 or later.
-
-Save to PostgreSQL
-```php
-// Database configuration
-$config = array(
-    'driver' => 'pgsql',
-    'host' => 'localhost',
-    'port' => 5432,
-    'database' => 'template',
-    'username' => 'root',
-    'password' => ''
-);
-$database = new DBController($config);
-```
-
-Save to MySQL
-```php
-// Database configuration
-$config = array(
-    'driver' => 'mysql',
-    'host' => 'localhost',
-    'port' => 3306,
-    'database' => 'template',
-    'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8mb4'
-);
-$database = new DBController($config);
-```
-
-Save to Redis
-```php
-// Redis configuration
-$redisConfig = array(
-    'host' => 'redis',
-    'port' => 6379,
-    'password' => '',
-    'database' => 1
-);
-$redis = new RedisController($redisConfig);
-```
-
-## Cache CSS &amp; JS File
-#### CSS Cache
-**Cache specific part of CSS**  
-html
-```html
-<link href="{loadcss common.css index}" rel="stylesheet" type="text/css">
-```
-You can use variable as `specific part`
-```html
-<!--{eval $current_page = 'index'}-->
-<link href="{loadcss model.css $current_page}" rel="stylesheet" type="text/css">
-```
-
-CSS
-```css
-/*[index]*/
-.header {
-    display: block;
-}
-
-.link {
-    color: blue;
-}
-/*[/index]*/
-```
-Output:
-HTML
-```html
-<link href="cache/model_index.css?v=Ad0Dwf8" rel="stylesheet" type="text/css">
-```
-`cache/model_index.css`
-```css
-/* index */
-.header{display:block}.link{color:blue}
-/* END index */
-```
-
-Also, with **`array`**
-```html
-<!--{eval $current_page = array('index','test')}-->
-<link href="{loadcss model.css $current_page}" rel="stylesheet" type="text/css">
-```
-Or **`string`**, seperate by `,`
-```html
-<link href="{loadcss model.css index,test}" rel="stylesheet" type="text/css">
-```
-CSS
-```css
-/*[index]*/
-.header {
-    display: block;
-}
-
-.link {
-    color: blue;
-}
-/*[/index]*/
-
-/*[test]*/
-.header {
-    display: inline-block;
-}
-
-.link {
-    color: red;
-}
-/*[/test]*/
-```
-Output:
-HTML
-```html
-<link href="cache/model_MULTIPLE.css?v=Ad0Dwf8" rel="stylesheet" type="text/css">
-```
-`cache/model_MULTIPLE.css`
-```css
-/* index */
-.header{display:block}.link{color:blue}
-/* END index */
-/* test */
-.header{display:inline-block}.link{color:red}
-/* END test */
-```
-
-**Directly cache CSS file**  
-html
-```html
-<link href="{loadcss common.css}" rel="stylesheet" type="text/css">
-```
-Output:
-```html
-<link href="static/css/common.css?v=Ad0Dwf8" rel="stylesheet" type="text/css">
-```
-
-#### JS Cache
-html
-```html
-<script src="{loadjs jquery.min.js}" type="text/javascript"></script>
-```
-Output:
-```html
-<script src="static/js/jquery.min.js?v=B22PE8W" type="text/javascript"></script>
-```
-
-#### Static File
-html
-```html
-<img src="{static img/logo.png}" alt="logo">
-```
-Output:
-```html
-<img src="static/img/logo.png" alt="logo">
-```
-
-## Functions
-#### **`echo`** function
-html
-```html
-<span>{$value}</span>
-```
-PHP
-```php
-<span><?php echo $value; ?></span>
-```
-
-#### **`assign variable`** function
->Note: don't put any php script into **`block`** tag
-
-html
-```html
-<!--{block test}-->
-<span>html content</span>
-<!--{/block}-->
-```
-PHP
 ```php
 <?php
-$test = <<<EOF
 
-<span>html content</span>
+require __DIR__.'/vendor/autoload.php';
 
-EOF;
-?>
+use carry0987\Template\Template;
+
+$template = new Template([
+    'template_dir' => __DIR__.'/template',
+    'cache_dir' => __DIR__.'/cache',
+    'css_dir' => __DIR__.'/static/css',
+    'js_dir' => __DIR__.'/static/js',
+    'static_dir' => __DIR__.'/static',
+    'auto_update' => true,
+]);
+
+$name = 'Ada';
+include $template->loadTemplate('home.html');
 ```
 
-#### **`if`** function
-html
+Create `template/home.html`:
+
 ```html
-<!--{if expr1}-->
-    statement1
-<!--{elseif expr2}-->
-    statement2
-<!--{else}-->
-    statement3
-<!--{/if}-->
-```
-PHP
-```php
-<?php if(expr1) { ?>
-    statement1
-<?php } elseif(expr2) { ?>
-    statement2
-<?php } else { ?>
-    statement3
-<?php } ?>
+<h1>Hello {$name}</h1>
+<link href="{loadcss app.css}" rel="stylesheet">
+<script src="{loadjs app.js}"></script>
 ```
 
-#### **`loop`** function (without key)
-html
-```html
-<!--{loop $array $value}-->
-    <span>username</span>
-<!--{/loop}-->
-```
-PHP
-```php
-<?php foreach($array as $value) {?>
-    <span>username</span>
-<?php } ?>
-```
+The compiled template is written to the configured cache directory. With `auto_update` enabled, TemplateEngine recompiles a template when its source content changes.
 
-#### **`loop`** function (with key)
-html
-```html
-<!--{loop $array $key $value}-->
-    <span>{$key} = {$value}</span>
-<!--{/loop}-->
-```
-PHP
-```php
-<?php foreach($array as $key => $value) {?>
-    <span><?php echo $key; ?> = <?php echo $value; ?></span>
-<?php } ?>
-```
+## Features
 
-#### **`eval`** function
-html
-```html
-<!--{eval $value = 1+2}-->
-<span>{$value}</span>
-```
-PHP
-```php
-<?php eval $value = 1+2;?>
-<span><?php echo $value; ?></span>
-```
+- HTML-first syntax for variables, includes, conditions, loops, blocks, and expressions
+- Cache-aware CSS, JavaScript, and static asset paths
+- CSS modules selected with strings, arrays, or PHP variables
+- Local file metadata by default, with optional Redis, PostgreSQL, and MySQL backends
+- Configurable cache lifetime and optional HTML/CSS compression
 
-## **`PRESERVE`** mark
-html
-```html
-<!--{PRESERVE}-->
-<span>html content</span>
-<!--{/PRESERVE}-->
-/*{PRESERVE}*/
-<script>
-const value = 1+2;
-document.querySelector('span').innerHTML = `Value: ${value}`;
-</script>
-/*{/PRESERVE}*/
-```
-PHP
-```php
-<span>html content</span>
-<script>
-const value = 1+2;
-document.querySelector('span').innerHTML = `Value: ${value}`;
-</script>
-```
+## Documentation
+
+Read the full documentation for [template syntax](https://carry0987.github.io/TemplateEngine/docs/template-syntax), [asset handling](https://carry0987.github.io/TemplateEngine/docs/assets-and-caching), [cache backends](https://carry0987.github.io/TemplateEngine/docs/cache-backends), and [local development](https://carry0987.github.io/TemplateEngine/docs/local-development).
+
+## License
+
+MIT
