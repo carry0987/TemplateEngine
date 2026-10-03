@@ -29,7 +29,7 @@ $redisConfig = array(
     'host' => 'redis',
     'port' => 6379,
     'password' => 'change-me-redis-password',
-    'database' => 5,
+    'database' => 0,
 );
 $database = new DBController($config);
 $redis = new RedisController($redisConfig);

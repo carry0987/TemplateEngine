@@ -83,7 +83,7 @@ services:
         condition: service_healthy
         required: false
     environment:
-      CONNECTIONS: mariadb,postgres
+      CONNECTIONS: mariadb,postgres,redis
       # MariaDB connection settings
       LABEL_mariadb: MariaDB
       SERVER_mariadb: mariadb
@@ -101,6 +101,13 @@ services:
       PORT_postgres: 5432
       ENGINE_postgres: postgres@dbgate-plugin-postgres
       SCHEMA_postgres: public
+      # Redis connection settings
+      LABEL_redis: Redis
+      SERVER_redis: redis
+      PASSWORD_redis: ${REDIS_PASSWORD}
+      PORT_redis: 6379
+      ENGINE_redis: redis@dbgate-plugin-redis
+      # General settings
       TZ: Asia/Taipei
     volumes:
       - dbgate_data:/root/.dbgate
