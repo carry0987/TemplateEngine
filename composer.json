@@ -1,7 +1,11 @@
 {
     "name": "carry0987/template-engine",
     "description": "Light & fast php template engine, using Composer",
-    "keywords": ["template", "engine", "template-engine"],
+    "keywords": [
+        "template",
+        "engine",
+        "template-engine"
+    ],
     "type": "library",
     "require": {
         "php": ">=8.1",
