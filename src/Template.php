@@ -18,7 +18,7 @@ class Template
     private $options = array();
     private $compress = array('html' => false, 'css' => true);
 
-    private static $asset = null;
+    private static ?Asset $asset = null;
 
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
@@ -234,6 +234,7 @@ class Template
     private function checkTemplate(string $file)
     {
         $check_tpl = false;
+        $expire_time = 0;
         if ($this->connectdb !== null || $this->redis !== null) {
             $versionContent = $this->getVersion(Utils::dashPath($this->options['template_dir']), $file, 'html');
             if ($versionContent !== false) {
@@ -605,7 +606,7 @@ class Template
     }
 
     //Replace variable output
-    private function stripvTags(array|string $expr, null|array|string $statement = null)
+    private function stripvTags(array|string $expr, array|string|null $statement = null)
     {
         $expr = str_replace('\\\"', '\"', preg_replace("/\<\?\=(\\\$.+?)\?\>/s", "\\1", $expr));
         if (empty($statement)) return $expr;

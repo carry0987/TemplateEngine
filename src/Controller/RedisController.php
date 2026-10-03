@@ -7,7 +7,7 @@ use carry0987\Redis\RedisTool;
 
 class RedisController
 {
-    private $redis = null;
+    private ?RedisTool $redis = null;
     private $hash = 'tpl';
 
     public function __construct(mixed $redisConfig)

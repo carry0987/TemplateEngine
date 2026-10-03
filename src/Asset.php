@@ -12,8 +12,8 @@ use carry0987\Template\Exception\AssetException;
 class Asset
 {
     private $options = array();
-    private $place = null;
-    private $path_holder = null;
+    private array|string|null $place = null;
+    private ?\Closure $path_holder = null;
     private $cache_dir = array('css' => null, 'js' => null);
     private ?DBController $connectdb = null;
     private ?RedisController $redis = null;
@@ -56,7 +56,7 @@ class Asset
 
     public function setPathHolder(callable $path_holder)
     {
-        $this->path_holder = $path_holder;
+        $this->path_holder = \Closure::fromCallable($path_holder);
 
         return $this;
     }
